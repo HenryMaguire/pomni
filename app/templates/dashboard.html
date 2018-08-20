@@ -15,16 +15,26 @@
   </div>
   <h2>Dashboard</h2>
 <div class="row">
+  {% if has_projects %}
   {% for proj in projects %}
-  <h4>{{ proj.title }}!</h4>
-  <div class="col-md-6">
-    <a href="/project/"><img src="http://via.placeholder.com/300x150"></a>
-  </div>
-  <div class="col-md-6">
-  Last updated: {{ proj.stampLast }} <br>
-  {{ proj.postLast }}</div>
-</div>
+  <h3>Project {{ proj.id }}: {{ proj.title }}</h3>
+  <p>Description: {{ proj.description }}
+  </p>
+  <p><a href="/project/"><img src="http://via.placeholder.com/300x150"></a>
+  </p>
+
+  <p>Last updated: {{ proj.timestamp }}
+  </p>
   {% endfor %}
+
+  <p><h4><a href="/new_project/">Create new project</a></h4>
+  </p>
+  {% else %}
+  <h4>You don't seem to have started any projects. <a href="/new_project/">Make one?</a></h4>
+  {% endif %}
+
+</div>
+
 
 </div>
 </body>

@@ -1,8 +1,8 @@
 from flask import render_template, flash, redirect, url_for
 from app import app, db
-from app.forms import LoginForm, RegistrationForm, DeleteUserForm
+from app.forms import LoginForm, RegistrationForm, DeleteUserForm, NewProjectForm
 from flask_login import current_user, login_user, logout_user, login_required
-from app.models import User
+from app.models import User, Project
 import time
 
 @app.route("/", methods=['GET', 'POST'])
@@ -30,7 +30,6 @@ def login():
 def register():
     if current_user.is_authenticated:
         # if they're logged in already go to dash
-        print current_user
         return redirect(url_for('dashboard'))
     form = RegistrationForm()
     if form.validate_on_submit():
@@ -66,22 +65,44 @@ def logout():
 def project():
     return render_template('project.html')
 
+@app.route("/new_project/", methods=['GET', 'POST'])
+@login_required
+def newProject():
+    form = NewProjectForm()
+    if form.validate_on_submit():
+        # take username and query database with it
+        project = Project(title=form.title.data, description=form.description.data,
+                       study_length=form.study_length.data,
+                       summary_length=form.summary_length.data,
+                       s_break_length=form.s_break_length.data,
+                       l_break_length=form.l_break_length.data,
+                       pom_num=form.pom_num.data,
+                       cycle_num=form.cycle_num.data,
+                       author=current_user)
+        db.session.add(project)
+        db.session.commit()
+        print 'Your project was created!'
+        flash('Your project was created!')
+        return redirect(url_for('dashboard'))
+    else:
+        return render_template('new_project.html', form=form)
+
 @app.route("/dashboard/", methods=['GET', 'POST'])
 @login_required
 def dashboard():
-    projects = [
-        {
-            'title': "Project 1",
-            'stampLast': '31:08:2018 13:00',
-            'postLast': 'Just added a new feature!'
-        },
-        {
-            'title': "Project 2",
-            'stampLast': '31:08:2018 14:00',
-            'postLast': 'Just added a cool feature!',
-        }
-    ]
-    return render_template('dashboard.html', projects=projects)
+    # If the user has no projects, suggest making a new one
+    project0 = Project.query.filter_by(user_id=current_user.id).first()
+    projects = Project.query.filter_by(user_id=current_user.id)
+    if project0 is None:
+        has_projects = False
+        return render_template('dashboard.html',
+                                projects=projects,
+                                has_projects=has_projects)
+    else:
+        has_projects = True
+        return render_template('dashboard.html',
+                                projects=projects,
+                                has_projects=has_projects)
 
 @app.route("/notebank/")
 @login_required
