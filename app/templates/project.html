@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='css/bootstrap.css') }}">
+</head>
+<body>
+<div class="container">
+  <div class="row">
+    <div class="col-md-6">
+      <h1>POMNI</h1>
+      <a href="/dashboard"><img src="http://via.placeholder.com/150x150"></a>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-6">
+      <a href="/notebank/"><h3>PROJECT X</h3></a>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-6">
+
+    Previous Entry: 31/08/2018 13:00 <br>
+      Aim: I would like to get the structure of the site complete by the end of this afternoons session. <br>
+      Mood: excited! <br>
+
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-6">
+    <form class="OWS-input" action="/project/" method = 'POST'>
+    <input type='text' size='50' name='password' autofocus="autofocus" placeholder="What did you get up to in the last pomomodoro?"><input type='submit' value='Submit'>
+    </div>
+</div>
+</body>
+</html>
