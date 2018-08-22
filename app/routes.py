@@ -1,8 +1,8 @@
 from flask import render_template, flash, redirect, url_for
 from app import app, db
-from app.forms import LoginForm, RegistrationForm, DeleteUserForm, NewProjectForm
+from app.forms import LoginForm, RegistrationForm, DeleteUserForm, NewProjectForm, DeleteProjectForm, NewPomodoroForm
 from flask_login import current_user, login_user, logout_user, login_required
-from app.models import User, Project
+from app.models import User, Project, Pomodoro
 import time
 
 @app.route("/", methods=['GET', 'POST'])
@@ -60,10 +60,22 @@ def logout():
     logout_user()
     return redirect(url_for('login'))
 
-@app.route("/project/", methods=['GET', 'POST'])
+@app.route("/dashboard/", methods=['GET', 'POST'])
 @login_required
-def project():
-    return render_template('project.html')
+def dashboard():
+    # If the user has no projects, suggest making a new one
+    project0 = Project.query.filter_by(user_id=current_user.id).first()
+    projects = Project.query.filter_by(user_id=current_user.id)
+    if project0 is None:
+        has_projects = False
+        return render_template('dashboard.html',
+                                projects=projects,
+                                has_projects=has_projects)
+    else:
+        has_projects = True
+        return render_template('dashboard.html',
+                                projects=projects,
+                                has_projects=has_projects)
 
 @app.route("/new_project/", methods=['GET', 'POST'])
 @login_required
@@ -87,22 +99,44 @@ def newProject():
     else:
         return render_template('new_project.html', form=form)
 
-@app.route("/dashboard/", methods=['GET', 'POST'])
+@app.route("/delete_project/<title>", methods=['GET', 'POST'])
+def deleteProject(title):
+    form = DeleteProjectForm()
+    p = Project.query.filter_by(user_id=current_user.id, title=title).first()
+    if form.validate_on_submit():
+        db.session.delete(p)
+        db.session.commit()
+        print "{}, has been deleted.".format(p.id)
+        flash("{}, has been deleted.".format(p.id))
+        return redirect(url_for('dashboard'))
+    return render_template('delete_project.html', title='Delete project',
+                            form=form, project=p)
+
+@app.route("/project/<title>", methods=['GET', 'POST'])
 @login_required
-def dashboard():
-    # If the user has no projects, suggest making a new one
-    project0 = Project.query.filter_by(user_id=current_user.id).first()
-    projects = Project.query.filter_by(user_id=current_user.id)
-    if project0 is None:
-        has_projects = False
-        return render_template('dashboard.html',
-                                projects=projects,
-                                has_projects=has_projects)
-    else:
-        has_projects = True
-        return render_template('dashboard.html',
-                                projects=projects,
-                                has_projects=has_projects)
+def project(title):
+    proj = Project.query.filter_by(user_id=current_user.id, title=title).first()
+    form = NewPomodoroForm()
+
+    if form.validate_on_submit():
+        # logic for pomodoro timer goes here!
+        pom = Pomodoro(session=proj.num_sessions+1,
+                       body = form.pom_body.data,
+                       is_aim = False, author=current_user, project=proj)
+        proj.new_session_count()
+        db.session.add(proj)
+        db.session.add(pom)
+        db.session.commit()
+        pom.end_time()
+        db.session.commit()
+        return redirect(url_for("project", title=title))
+    poms = Pomodoro.query.filter_by(project=proj, session=proj.num_sessions) # print latest session
+    print poms.first()
+    return render_template("project.html", form=form,
+                            project=proj, pomodoros=poms)
+
+
+
 
 @app.route("/notebank/")
 @login_required

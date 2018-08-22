@@ -14,7 +14,7 @@ class User(UserMixin, db.Model):
     # backref is name pointing from 'many' to 'one'
     #
     projects = db.relationship('Project', backref='author', lazy='dynamic')
-
+    pomodoros = db.relationship('Pomodoro', backref='author', lazy='dynamic')
     def __repr__(self):
         return '<User {}>'.format(self.username)
 
@@ -28,6 +28,7 @@ class Project(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(120), index=True, unique=True)
     description = db.Column(db.String(240))
+    num_sessions = db.Column(db.Integer, default=0)
     # times indexed to enable chronological ordering
     # converted to the user's local time when displayed
     study_length = db.Column(db.Integer, default=25)
@@ -41,9 +42,29 @@ class Project(db.Model):
     # foreign key: references the id in user model
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
 
+    pomodoros = db.relationship('Pomodoro', backref='project', lazy='dynamic')
+
     def __repr__(self):
         return '<Project {}>'.format(self.title)
+    def new_session_count(self):
+        self.num_sessions +=1
 
+class Pomodoro(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    session = db.Column(db.Integer) # groups aim/poms in same session together
+    body = db.Column(db.String(420))
+    is_aim = db.Column(db.Boolean)
+    # times indexed to enable chronological ordering
+    # converted to the user's local time when displayed
+    timestamp_start = db.Column(db.DateTime, index=True, default=datetime.utcnow)
+    timestamp_end = db.Column(db.DateTime, index=True, default=datetime.utcnow)
+    # foreign key: references the id in user model
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    project_id = db.Column(db.Integer, db.ForeignKey('project.id'))
+    def __repr__(self):
+        return '<Pomodoro {}>'.format(self.id)
+    def end_time(self):
+        self.timestamp_end = datetime.utcnow()
 
 @login.user_loader
 def load_user(id):

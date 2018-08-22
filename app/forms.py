@@ -50,3 +50,13 @@ class NewProjectForm(FlaskForm):
         project = Project.query.filter_by(title=title.data).first()
         if project is not None:
             raise ValidationError("You've already got a project with that title!")
+
+class DeleteProjectForm(FlaskForm):
+    submit = SubmitField('Please delete this project')
+
+class NewPomodoroForm(FlaskForm):
+    aim_body = StringField('What are your aims for this session?')
+    pom_body = StringField('What did you cover in this pomodoro?',
+                            validators=[DataRequired()])
+
+    submit = SubmitField('Enter')

@@ -13,23 +13,35 @@
   </div>
   <div class="row">
     <div class="col-md-6">
-      <a href="/notebank/"><h3>PROJECT X</h3></a>
+      <a href="/notebank/"><h3>PROJECT: {{ project.title }} </h3></a>
     </div>
   </div>
   <div class="row">
     <div class="col-md-6">
 
-    Previous Entry: 31/08/2018 13:00 <br>
-      Aim: I would like to get the structure of the site complete by the end of this afternoons session. <br>
-      Mood: excited! <br>
-
+    Created: {{ project.timestamp }} <br>
+    Description: {{ project.description }} <br>
     </div>
   </div>
-  <div class="row">
-    <div class="col-md-6">
-    <form class="OWS-input" action="/project/" method = 'POST'>
-    <input type='text' size='50' name='password' autofocus="autofocus" placeholder="What did you get up to in the last pomomodoro?"><input type='submit' value='Submit'>
-    </div>
-</div>
+
+      <form action="" method="post">
+          {{ form.hidden_tag() }}
+      <p>
+          {{ form.pom_body.label }}<br>
+          {{ form.pom_body(size=64) }}<br>
+          {% for error in form.pom_body.errors %}
+          <span style="color: red;">[{{ error }}]</span>
+          {% endfor %}
+      </p>
+      <p>{{ form.submit() }}</p>
+    </form>
+    <h4>Previous session: </h4>
+    <p> {% for pom in pomodoros %}
+        {{ pom.body }} <br>
+        Logged: {{ pom.timestamp_end}}
+        {% endfor %}
+    </p>
+
+    <a href="/delete_project/{{project.title}}"><h4>Delete project</h4></a>
 </body>
 </html>
