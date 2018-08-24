@@ -1,46 +1,73 @@
 <!DOCTYPE html>
 <html>
+<title></title>
 <head>
   <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='css/bootstrap.css') }}">
 </head>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="{{ url_for('static', filename='js/timer.js') }}"></script>
+
 <body>
-<div class="container">
-  <div class="row">
-    <div class="col-md-6">
-      <h1>POMNI</h1>
-      <a href="/dashboard"><img src="http://via.placeholder.com/150x150"></a>
-    </div>
-  </div>
-  <div class="row">
-    <div class="col-md-6">
-      <a href="/notebank/"><h3>PROJECT: {{ project.title }} </h3></a>
-    </div>
-  </div>
-  <div class="row">
-    <div class="col-md-6">
+  <h1>POMNI</h1>
+  <a href="/dashboard"><img src="https://image.flaticon.com/icons/svg/167/167283.svg" height="70" width="70"></a>
+<h3>PROJECT: {{ project.title }} </h3>
 
-    Created: {{ project.timestamp }} <br>
-    Description: {{ project.description }} <br>
-    </div>
-  </div>
+<p>
+Created: {{ project.timestamp }}</p>
+<p>
+Description: {{ project.description }}</p>
 
-      <form action="" method="post">
-          {{ form.hidden_tag() }}
-      <p>
-          {{ form.pom_body.label }}<br>
-          {{ form.pom_body(size=64) }}<br>
-          {% for error in form.pom_body.errors %}
-          <span style="color: red;">[{{ error }}]</span>
-          {% endfor %}
-      </p>
-      <p>{{ form.submit() }}</p>
-    </form>
-    <h4>Previous session: </h4>
-    <p> {% for pom in pomodoros %}
-        {{ pom.body }} <br>
-        Logged: {{ pom.timestamp_end}}
-        {% endfor %}
-    </p>
+
+{% if pomodoros.all()|length == 0  %}
+<form action="" method="post">
+    {{ form.hidden_tag() }}
+<p>
+    {{ form.aim_body.label }}<br>
+    {{ form.aim_body(size=64) }}<br>
+    {% for error in form.aim_body.errors %}
+    <span style="color: red;">[{{ error }}]</span>
+    {% endfor %}
+</p>
+<p>{{ form.submit() }}</p>
+</form>
+
+<p id="timer"></p>
+<script>
+  var Minutes = {{ project.study_length }};
+</script>
+
+{% elif pomodoros.all()|length < project.pom_num %}
+<p id="timer">{{ project.study_length }}:00</p>
+<form action="" method="post">
+    {{ form.hidden_tag() }}
+<p>
+    {{ form.pom_body.label }}<br>
+    {{ form.pom_body(size=64) }}<br>
+    {% for error in form.pom_body.errors %}
+    <span style="color: red;">[{{ error }}]</span>
+    {% endfor %}
+</p>
+<p>{{ form.submit() }}</p>
+</form>
+<script>
+  var Minutes = {{ project.s_break_length }};
+</script>
+
+<script>
+  var Minutes = {{ project.study_length }};
+</script>
+{% else %}
+<p id="timer">{{ project.l_break_length }}:00</p>
+<p>Have a long break</p>
+{% endif %}
+
+<a href="{{ url_for('notebank', title=project.title)}}"><h3>NOTEBANK</h3></a>
+<h4>Previous session: </h4>
+<p> {% for pom in pomodoros %}
+    {{ pom.body }} <br>
+    Logged: {{ pom.timestamp_end}}
+    {% endfor %}
+</p>
 
     <a href="/delete_project/{{project.title}}"><h4>Delete project</h4></a>
 </body>

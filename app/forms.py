@@ -35,19 +35,20 @@ class DeleteUserForm(FlaskForm):
 
 class NewProjectForm(FlaskForm):
     title = StringField('Project title', validators=[DataRequired()])
-    description = StringField('Project description')
-    study_length = IntegerField('Study length?')
-    summary_length = IntegerField('Summary length?')
-    s_break_length = IntegerField('Short break length?')
-    l_break_length = IntegerField('Long break length?')
+    description = StringField('Project description', default='')
+    study_length = IntegerField('Study length?', default=25)
+    summary_length = IntegerField('Summary length?', default=2)
+    s_break_length = IntegerField('Short break length?', default=3)
+    l_break_length = IntegerField('Long break length?', default=25)
 
-    pom_num = IntegerField('How many poms before long break?')
-    cycle_num = IntegerField('How many cycles?')
+    pom_num = IntegerField('How many poms before long break?', default=4)
+    cycle_num = IntegerField('How many cycles?', default=2 )
 
     submit = SubmitField('Create project')
 
     def validate_title(self, title):
-        project = Project.query.filter_by(title=title.data).first()
+
+        project = Project.query.filter_by(user_id=current_user.id, title=title.data).first()
         if project is not None:
             raise ValidationError("You've already got a project with that title!")
 

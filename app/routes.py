@@ -112,33 +112,36 @@ def deleteProject(title):
     return render_template('delete_project.html', title='Delete project',
                             form=form, project=p)
 
-@app.route("/project/<title>", methods=['GET', 'POST'])
+@app.route("/project/<title>/<stage>", methods=['GET', 'POST'])
 @login_required
-def project(title):
+def project(title, stage):
     proj = Project.query.filter_by(user_id=current_user.id, title=title).first()
     form = NewPomodoroForm()
-
     if form.validate_on_submit():
         # logic for pomodoro timer goes here!
         pom = Pomodoro(session=proj.num_sessions+1,
                        body = form.pom_body.data,
                        is_aim = False, author=current_user, project=proj)
-        proj.new_session_count()
-        db.session.add(proj)
+        pom.end_time()
         db.session.add(pom)
         db.session.commit()
-        pom.end_time()
-        db.session.commit()
-        return redirect(url_for("project", title=title))
+
+        if len(proj.pomodoros.all()) == proj.pom_num:
+            proj.new_session_count()
+            db.session.add(proj)
+            db.session.commit()
+        stage +=1
+        return redirect(url_for("project", title=title, stage=stage))
     poms = Pomodoro.query.filter_by(project=proj, session=proj.num_sessions) # print latest session
-    print poms.first()
     return render_template("project.html", form=form,
                             project=proj, pomodoros=poms)
 
 
 
 
-@app.route("/notebank/")
+@app.route("/notebank/<title>")
 @login_required
-def notebank():
-    return render_template('notebank.html')
+def notebank(title):
+    proj = Project.query.filter_by(user_id=current_user.id, title=title).first()
+    poms = proj.pomodoros
+    return render_template('notebank.html', project=proj, pomodoros=poms)
