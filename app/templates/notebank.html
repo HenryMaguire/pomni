@@ -11,7 +11,7 @@
       <a href="/dashboard"><img src="https://image.flaticon.com/icons/svg/167/167283.svg" height="70" width="70"></a>
     </div>
     <div class="col-md-6">
-      <a href="{{ url_for('project', title=project.title, stage={project.current_stage})}}"><img src="https://image.flaticon.com/icons/svg/1082/1082408.svg" height="70" width="70"></a>
+      <a href="{{ url_for('project', title=project.title, stage=project.current_stage)}}"><img src="https://image.flaticon.com/icons/svg/1082/1082408.svg" height="70" width="70"></a>
     </div>
   </div>
   <div class="row">
@@ -26,11 +26,13 @@
     Description: {{ project.description }} <br>
     </div>
   </div>
+
   {% for i in range(project.num_sessions) %}
 
     <h4>Session: {{i+1}} </h4>
     <p> {% for pom in pomodoros.filter_by(session=i+1) %}
         {{ pom.body }} <br>
+        {{ pom.is_aim }} <br>
         Logged: {{ pom.timestamp_end}}
         {% endfor %}
     </p>

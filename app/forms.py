@@ -56,7 +56,8 @@ class DeleteProjectForm(FlaskForm):
     submit = SubmitField('Please delete this project')
 
 class NewPomodoroForm(FlaskForm):
-    aim_body = StringField('What are your aims for this session?')
+    aim_body = StringField('What are your aims for this session?',
+                            validators=[])
     pom_body = StringField('What did you cover in this pomodoro?',
                             validators=[DataRequired()])
 

@@ -17,10 +17,10 @@
 <div class="row">
   {% if has_projects %}
   {% for proj in projects %}
-  <a href="/project/{{proj.title}}/{{proj.current_stage}}"><h3>Project {{ proj.id }}: {{ proj.title }}</h3></a>
+  <a href="/project/{{proj.title}}"><h3>Project {{ proj.id }}: {{ proj.title }}</h3></a>
   <p>Description: {{ proj.description }}
   </p>
-  <p><a href="/project/{{proj.title}}/{{proj.current_stage}}"><img src="https://image.flaticon.com/icons/svg/993/993416.svg" height="70" width="70"></a>
+  <p><a href="/project/{{proj.title}}"><img src="https://image.flaticon.com/icons/svg/993/993416.svg" height="70" width="70"></a>
   </p>
 
   <p>Last updated: {{ proj.timestamp }}

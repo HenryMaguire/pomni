@@ -112,29 +112,37 @@ def deleteProject(title):
     return render_template('delete_project.html', title='Delete project',
                             form=form, project=p)
 
-@app.route("/project/<title>/<stage>", methods=['GET', 'POST'])
+@app.route("/project/<title>", methods=['GET', 'POST'])
 @login_required
-def project(title, stage):
+def project(title):
     proj = Project.query.filter_by(user_id=current_user.id, title=title).first()
     form = NewPomodoroForm()
+    if proj.current_stage == 1+3*proj.pom_num:
+        proj.reset_stage()
+    if proj.current_stage ==1:
+        proj.num_sessions+=1
+        db.session.commit()
+    proj.current_stage+=1
+    db.session.commit()
+
     if form.validate_on_submit():
-        # logic for pomodoro timer goes here!
-        pom = Pomodoro(session=proj.num_sessions+1,
-                       body = form.pom_body.data,
-                       is_aim = False, author=current_user, project=proj)
+        proj.current_stage-=1 # weird double counting
+        db.session.commit()
+        print proj.current_stage
+        if proj.current_stage == 1:
+            pom = Pomodoro(body = form.aim_body.data, session=proj.num_sessions, is_aim = True,
+                           author=current_user, project=proj)
+        else:
+            pom = Pomodoro(body = form.pom_body.data,  session=proj.num_sessions,
+                           is_aim = False, author=current_user, project=proj)
         pom.end_time()
         db.session.add(pom)
-        db.session.commit()
+        return redirect(url_for("project", title=title))
 
-        if len(proj.pomodoros.all()) == proj.pom_num:
-            proj.new_session_count()
-            db.session.add(proj)
-            db.session.commit()
-        stage +=1
-        return redirect(url_for("project", title=title, stage=stage))
-    poms = Pomodoro.query.filter_by(project=proj, session=proj.num_sessions) # print latest session
+    poms = Pomodoro.query.filter_by(project=proj) # print latest session
     return render_template("project.html", form=form,
-                            project=proj, pomodoros=poms)
+                            project=proj, pomodoros=poms,
+                            title=title)
 
 
 

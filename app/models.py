@@ -50,6 +50,13 @@ class Project(db.Model):
         return '<Project {}>'.format(self.title)
     def new_session_count(self):
         self.num_sessions +=1
+        db.session.commit()
+    def step_stage(self):
+        self.current_stage +=1
+        db.session.commit()
+    def reset_stage(self):
+        self.current_stage = 0
+        db.session.commit()
 
 class Pomodoro(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -67,6 +74,7 @@ class Pomodoro(db.Model):
         return '<Pomodoro {}>'.format(self.id)
     def end_time(self):
         self.timestamp_end = datetime.utcnow()
+        db.session.commit()
 
 @login.user_loader
 def load_user(id):
