@@ -1,9 +1,10 @@
 from flask import render_template, flash, redirect, url_for
 from app import app, db
-from app.forms import LoginForm, RegistrationForm, DeleteUserForm, NewProjectForm, DeleteProjectForm, NewPomodoroForm
+from app.forms import LoginForm, RegistrationForm, DeleteUserForm, NewProjectForm
+from app.forms import DeleteProjectForm, NewPomodoroForm, NextProjectStepForm
 from flask_login import current_user, login_user, logout_user, login_required
 from app.models import User, Project, Pomodoro
-import time
+from datetime import datetime
 
 @app.route("/", methods=['GET', 'POST'])
 @app.route("/login/", methods=['GET', 'POST'])
@@ -51,7 +52,6 @@ def deleteUser():
         db.session.commit()
         print "{}, we're sorry to see you go!".format(current_user.username)
         flash("{}, we're sorry to see you go!".format(current_user.username))
-        import time
         return redirect(url_for('login'))
     return render_template('delete_user.html', title='Delete account', form=form)
 
@@ -117,7 +117,8 @@ def deleteProject(title):
 def project(title):
     proj = Project.query.filter_by(user_id=current_user.id, title=title).first()
     form = NewPomodoroForm()
-    if proj.current_stage == 1+3*proj.pom_num:
+    step_form = NextProjectStepForm()
+    if proj.current_stage == 3*proj.pom_num:
         proj.reset_stage()
 
     if form.validate_on_submit():
@@ -125,28 +126,32 @@ def project(title):
         #db.session.commit()
         pom = 0
         print proj.current_stage
-        if proj.current_stage == 1:
+        if proj.current_stage == 0:
             proj.num_sessions+=1
             db.session.commit()
 
             pom = Pomodoro(body = form.aim_body.data, session=proj.num_sessions, is_aim = True,
-                           author=current_user, project=proj)
-            pom.end_time()
+                           author=current_user, project=proj, timestamp_end = datetime.utcnow())
+            proj.current_stage+=1
+            db.session.commit()
             db.session.add(pom)
             db.session.commit()
             return redirect(url_for("project", title=title))
         else:
             pom = Pomodoro(body = form.pom_body.data,  session=proj.num_sessions,
                            is_aim = False, author=current_user, project=proj)
+            proj.current_stage+=1
+            db.session.commit()
             pom.end_time()
             db.session.add(pom)
             db.session.commit()
             return redirect(url_for("project", title=title))
-
-    proj.current_stage+=1
-    db.session.commit()
+    if step_form.validate_on_submit():
+        proj.current_stage+=1
+        db.session.commit()
+        return redirect(url_for("project", title=title))
     poms = Pomodoro.query.filter_by(project=proj) # print latest session
-    return render_template("project.html", form=form,
+    return render_template("project.html", step_form=step_form, form=form,
                             project=proj, pomodoros=poms,
                             title=title)
 

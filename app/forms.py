@@ -52,6 +52,10 @@ class NewProjectForm(FlaskForm):
         if project is not None:
             raise ValidationError("You've already got a project with that title!")
 
+class NextProjectStepForm(FlaskForm):
+    end_work = SubmitField('Click to complete pomodoro!')
+    end_s_break = SubmitField("Click to go again!")
+    end_l_break = SubmitField('Click for another block!')
 
 class DeleteProjectForm(FlaskForm):
     submit = SubmitField('Please delete this project')
