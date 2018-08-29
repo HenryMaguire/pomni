@@ -6,11 +6,14 @@
 <body>
 <div class="container">
   <div class="row">
-    <div class="col-md-6">
-      <h1>POMNI</h1>
+    <h1>POMNI</h1>
+  </div>
+  <div class="row">
+    <div class="col-md-2">
+
       <a href="/dashboard"><img src="https://image.flaticon.com/icons/svg/167/167283.svg" height="70" width="70"></a>
     </div>
-    <div class="col-md-6">
+    <div class="col-md-2">
       <a href="{{ url_for('project', title=project.title, stage=project.current_stage)}}"><img src="https://image.flaticon.com/icons/svg/1082/1082408.svg" height="70" width="70"></a>
     </div>
   </div>
@@ -29,11 +32,17 @@
 
   {% for i in range(project.num_sessions) %}
 
-    <h4>Session: {{i+1}} </h4>
-    <p> {% for pom in pomodoros.filter_by(session=i+1) %}
-        {{ pom.body }} <br>
-        {{ pom.is_aim }} <br>
+    <h3>Session: {{i+1}} </h3>
+    {% for pom in pomodoros.filter_by(session=i+1) %}
+    {% if pom.is_aim %}
+        <h4>Aim:<h4>
+    {% else %}
+        <h4>Summary:<h4>
+    {% endif %}
+        <h5>{{ pom.body }} </h5>
+        <h6>
         Logged: {{ pom.timestamp_end}}
+      </h6>
         {% endfor %}
     </p>
     {% endfor %}

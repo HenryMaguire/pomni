@@ -6,24 +6,31 @@
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 </head>
 <body>
-
+<div class="container">
+  <div class="row">
+  <div class="col-md-6">
   <h1>POMNI</h1>
   <a href="/dashboard"><img src="https://image.flaticon.com/icons/svg/167/167283.svg" height="70" width="70"></a>
+  </div>
+  </div>
+<div class="row">
+<div class="col-md-6">
 <h3>PROJECT: {{ project.title }} </h3>
 
-<p>
-Created: {{ project.timestamp }}</p>
-<p>
-Description: {{ project.description }}</p>
+<h4>
+Created: {{ project.timestamp }}</h4>
+<h5>
+Description: {{ project.description }}</h5>
+</div>
 
-
+<div class="col-md-3">
 {% if project.current_stage == 1  %}
 
 <form action="" method="post">
     {{ form.hidden_tag() }}
 <p>
     {{ form.aim_body.label }}<br>
-    {{ form.aim_body(size=64) }}<br>
+    {{ form.aim_body(size=84, autofocus=true) }}<br>
     {% for error in form.aim_body.errors %}
     <span style="color: red;">[{{ error }}]</span>
     {% endfor %}
@@ -38,23 +45,22 @@ Description: {{ project.description }}</p>
 
 
 {% elif ((project.current_stage-2)%3==0 ) and (project.current_stage < (1+(3*project.pom_num)) )  %}
-<p>Work!</p>
-<p id="timer">{{ project.study_length }}:00</p>
+<h4>Work!</h4>
+<p id="timer">{{ project.study_length }} : 00</p>
 <script src="{{ url_for('static', filename='js/timer.js') }}"></script>
 <script>
   var Minutes = {{ project.study_length }};
 </script>
-<p>{{ project.current_stage }}</p>
 
 
 {% elif ((project.current_stage-2)%3==1 ) and (project.current_stage < (1+(3*project.pom_num)) ) %}
-<p>Summarise what you just did!</p>
-
+<h4>Summarise what you just did!</h4>
+<p id="timer">0{{ project.summary_length }} : 00</p>
 <form action="" method="post">
     {{ form.hidden_tag() }}
 <p>
     {{ form.pom_body.label }}<br>
-    {{ form.pom_body(size=64) }}<br>
+    {{ form.pom_body(size=64, autofocus=true) }}<br>
     {% for error in form.pom_body.errors %}
     <span style="color: red;">[{{ error }}]</span>
     {% endfor %}
@@ -62,7 +68,7 @@ Description: {{ project.description }}</p>
 <div id="submit-button">{{ form.submit() }}</div>
 </form>
 
-<p id="timer">{{ project.summary_length }}:00</p>
+
 <script src="{{ url_for('static', filename='js/timer.js') }}"></script>
 <script>
   var Minutes = {{ project.summary_length }};
@@ -70,33 +76,42 @@ Description: {{ project.description }}</p>
 <p>{{ project.current_stage }}</p>
 
 {% elif ((project.current_stage-2)%3==2 ) and (project.current_stage < (1+(3*project.pom_num)) ) %}
-<p>Have a short break</p>
-<p>{{ project.current_stage }}</p>
-<p id="timer"></p>
+<h4>Have a short break</h4>
+<p id="timer">0{{ project.s_break_length }} : 00</p>
 <script src="{{ url_for('static', filename='js/timer.js') }}"></script>
 <script>
   var Minutes = {{ project.s_break_length }};
 </script>
 
 {% else %}
-<p id="timer">{{ project.l_break_length }}:00</p>
-<p>Have a long break</p>
-<p>{{ project.current_stage }}</p>
+<h4>Have a long break</h4>
+<p id="timer">{{ project.l_break_length }} : 00</p>
+
 <script src="{{ url_for('static', filename='js/timer.js') }}"></script>
 <script>
-  var Minutes = {{ project.s_break_length }};
+  var Minutes = {{ project.l_break_length }};
 </script>
 {% endif %}
-
+</div>
+</div>
+<div class="row">
 <a href="{{ url_for('notebank', title=project.title)}}"><h3>NOTEBANK</h3></a>
 <h4>Previous session: </h4>
-<p> {% for pom in pomodoros %}
-    {{ pom.body }} <br>
+ {% for pom in pomodoros %}
+ <p>
+    <h5>{{ pom.body }}</h5>
     Logged: {{ pom.timestamp_end}}
+    </p>
     {% endfor %}
-</p>
 
-    <a href="/delete_project/{{project.title}}"><h4>Delete project</h4></a>
+</div>
+
+<div class="row">
+  <div class="col-md-3">
+  <a href="/delete_project/{{project.title}}"><h4>Delete project</h4></a>
+  </div>
+</div>
+</div>
 
 </body>
 </html>

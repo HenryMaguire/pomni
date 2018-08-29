@@ -119,26 +119,32 @@ def project(title):
     form = NewPomodoroForm()
     if proj.current_stage == 1+3*proj.pom_num:
         proj.reset_stage()
-    if proj.current_stage ==1:
-        proj.num_sessions+=1
-        db.session.commit()
-    proj.current_stage+=1
-    db.session.commit()
 
     if form.validate_on_submit():
-        proj.current_stage-=1 # weird double counting
-        db.session.commit()
+        #proj.current_stage-=1 # weird double counting
+        #db.session.commit()
+        pom = 0
         print proj.current_stage
         if proj.current_stage == 1:
+            proj.num_sessions+=1
+            db.session.commit()
+
             pom = Pomodoro(body = form.aim_body.data, session=proj.num_sessions, is_aim = True,
                            author=current_user, project=proj)
+            pom.end_time()
+            db.session.add(pom)
+            db.session.commit()
+            return redirect(url_for("project", title=title))
         else:
             pom = Pomodoro(body = form.pom_body.data,  session=proj.num_sessions,
                            is_aim = False, author=current_user, project=proj)
-        pom.end_time()
-        db.session.add(pom)
-        return redirect(url_for("project", title=title))
+            pom.end_time()
+            db.session.add(pom)
+            db.session.commit()
+            return redirect(url_for("project", title=title))
 
+    proj.current_stage+=1
+    db.session.commit()
     poms = Pomodoro.query.filter_by(project=proj) # print latest session
     return render_template("project.html", form=form,
                             project=proj, pomodoros=poms,

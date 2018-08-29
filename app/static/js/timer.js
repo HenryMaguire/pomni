@@ -1,6 +1,7 @@
 
 $(document).ready(() => {
   function startTimer(duration) {
+      duration = duration*60
       var timer = duration, minutes, seconds;
       var refresh = setInterval(function () { // refresh every second
           minutes = parseInt(timer / 60, 10)
