@@ -4,8 +4,12 @@
 <head>
   <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='css/bootstrap.css') }}">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <audio id="over_music">
+      <source src="{{ url_for('static', filename='beepbeep.mp3') }}">
+  </audio>
 </head>
 <body>
+
 <div class="container">
   <div class="row">
   <div class="col-md-6">
@@ -21,6 +25,7 @@
 Created: {{ project.timestamp }}</h4>
 <h5>
 Description: {{ project.description }}</h5>
+<a href="{{ url_for('editProject', title=project.title)}}"><h5>Change project settings</h5></a>
 </div>
 
 <div class="col-md-3">
@@ -38,7 +43,7 @@ Description: {{ project.description }}</h5>
 
 <div id="submit-button">{{ form.submit() }}</div>
 </form>
-<p>{{ project.current_stage }}</p>
+<p>{{ project.current_stage }}/{{3*project.pom_num}}</p>
 
 
 
@@ -55,7 +60,7 @@ Description: {{ project.description }}</h5>
     {{ step_form.hidden_tag() }}
     <p>{{ step_form.end_work() }}</p>
 </form>
-{{project.current_stage}}
+{{project.current_stage}}/{{3*project.pom_num}}
 {% elif ((project.current_stage-2)%3==0 ) and (project.current_stage < 3*project.pom_num ) %}
 <h4>Summarise what you just did!</h4>
 <p id="timer">0{{ project.summary_length }} : 00</p>
@@ -76,7 +81,7 @@ Description: {{ project.description }}</h5>
 <script>
   var Minutes = {{ project.summary_length }};
 </script>
-<p>{{ project.current_stage }}</p>
+<p>{{ project.current_stage }}/{{3*project.pom_num}}</p>
 
 {% elif ((project.current_stage-3)%3==0 ) and (project.current_stage < 3*project.pom_num ) %}
 <h4>Have a short break</h4>
@@ -91,8 +96,7 @@ Description: {{ project.description }}</h5>
     <p>{{ step_form.end_s_break() }}</p>
 </form>
 
-{{project.current_stage}}
-
+{{project.current_stage}}/{{3*project.pom_num}}
 {% else %}
 <h4>Have a long break</h4>
 <p id="timer">{{ project.l_break_length }} : 00</p>
@@ -112,17 +116,17 @@ Description: {{ project.description }}</h5>
 </div>
 </div>
 <div class="row">
+  <div class="col-md-6">
 <a href="{{ url_for('notebank', title=project.title)}}"><h3>NOTEBANK</h3></a>
-<h4>Previous session: </h4>
- {% for pom in pomodoros %}
- <p>
-    <h5>{{ pom.body }}</h5>
-    Logged: {{ pom.timestamp_end}}
-    </p>
-    {% endfor %}
 
+<h4>Current aim:</h4>
+<h5>{{recents[0].body}}</h5>
+<h6>{{recents[0].timestamp_end}}</h6>
+<h4>Recent activity: </h4>
+<h5>{{recents[1].body}}</h5>
+<h6>{{recents[1].timestamp_end}}</h6>
 </div>
-
+</div>
 <div class="row">
   <div class="col-md-3">
   <a href="/delete_project/{{project.title}}"><h4>Delete project</h4></a>

@@ -14,7 +14,7 @@
       <a href="/dashboard"><img src="https://image.flaticon.com/icons/svg/167/167283.svg" height="70" width="70"></a>
     </div>
     <div class="col-md-2">
-      <a href="{{ url_for('project', title=project.title, stage=project.current_stage)}}"><img src="https://image.flaticon.com/icons/svg/1082/1082408.svg" height="70" width="70"></a>
+      <a href="{{ url_for('project', title=project.title)}}"><img src="https://image.flaticon.com/icons/svg/1082/1082408.svg" height="70" width="70"></a>
     </div>
   </div>
   <div class="row">
@@ -34,16 +34,20 @@
 
     <h3>Session: {{i+1}} </h3>
     {% for pom in pomodoros.filter_by(session=i+1) %}
-    {% if pom.is_aim %}
+    {% if pom.body|length>0 %}
+      {% if pom.is_aim %}
         <h4>Aim:<h4>
-    {% else %}
+          {% else %}
         <h4>Summary:<h4>
-    {% endif %}
+          {% endif %}
+
         <h5>{{ pom.body }} </h5>
         <h6>
         Logged: {{ pom.timestamp_end}}
       </h6>
-        {% endfor %}
+      {% else %}
+      {% endif %}
+      {% endfor %}
     </p>
     {% endfor %}
 </body>

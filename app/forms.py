@@ -52,6 +52,26 @@ class NewProjectForm(FlaskForm):
         if project is not None:
             raise ValidationError("You've already got a project with that title!")
 
+class EditProjectForm(FlaskForm):
+    title = StringField('Project title', validators=[DataRequired()])
+    description = StringField('Project description')
+    study_length = IntegerField('Study length?')
+    summary_length = IntegerField('Summary length?')
+    s_break_length = IntegerField('Short break length?')
+    l_break_length = IntegerField('Long break length?')
+
+    pom_num = IntegerField('How many poms before long break?')
+    cycle_num = IntegerField('How many cycles?')
+
+    submit = SubmitField('Save changes')
+    """
+    def validate_title(self, title):
+
+        project = Project.query.filter_by(user_id=current_user.id, title=title.data).first()
+        if project.title == (project is not None):
+            pass
+            raise ValidationError("You've already got a project with that title!")"""
+
 class NextProjectStepForm(FlaskForm):
     end_work = SubmitField('Click to complete pomodoro!')
     end_s_break = SubmitField("Click to go again!")

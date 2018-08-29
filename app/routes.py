@@ -1,10 +1,11 @@
 from flask import render_template, flash, redirect, url_for
 from app import app, db
 from app.forms import LoginForm, RegistrationForm, DeleteUserForm, NewProjectForm
-from app.forms import DeleteProjectForm, NewPomodoroForm, NextProjectStepForm
+from app.forms import DeleteProjectForm, NewPomodoroForm, NextProjectStepForm, EditProjectForm
 from flask_login import current_user, login_user, logout_user, login_required
 from app.models import User, Project, Pomodoro
 from datetime import datetime
+from sqlalchemy import desc
 
 @app.route("/", methods=['GET', 'POST'])
 @app.route("/login/", methods=['GET', 'POST'])
@@ -118,7 +119,7 @@ def project(title):
     proj = Project.query.filter_by(user_id=current_user.id, title=title).first()
     form = NewPomodoroForm()
     step_form = NextProjectStepForm()
-    if proj.current_stage == 3*proj.pom_num:
+    if proj.current_stage > 3*proj.pom_num:
         proj.reset_stage()
 
     if form.validate_on_submit():
@@ -151,11 +152,40 @@ def project(title):
         db.session.commit()
         return redirect(url_for("project", title=title))
     poms = Pomodoro.query.filter_by(project=proj) # print latest session
+    current_aim =  Pomodoro.query.filter_by(project=proj,
+                                            session=proj.num_sessions,
+                                            is_aim=True).first()
+    most_recent = None
+    try:
+        most_recent = poms.order_by(desc(Pomodoro.timestamp_end)).all()[0]
+    except:
+        pass
     return render_template("project.html", step_form=step_form, form=form,
                             project=proj, pomodoros=poms,
-                            title=title)
+                            title=title, recents = [current_aim, most_recent])
 
+@app.route("/edit_project/<title>", methods=['GET', 'POST'])
+@login_required
+def editProject(title):
+    proj = Project.query.filter_by(user_id=current_user.id, title=title).first()
+    form = EditProjectForm()
+    if form.validate_on_submit():
+        # take username and query database with it
+        proj.title=form.title.data
+        proj.description=form.description.data
+        proj.study_length=form.study_length.data
+        proj.summary_length=form.summary_length.data
+        proj.s_break_length=form.s_break_length.data
+        proj.l_break_length=form.l_break_length.data
+        proj.pom_num=form.pom_num.data
+        proj.cycle_num=form.cycle_num.data
 
+        db.session.commit()
+        print 'Your project has been edited!'
+        flash('Your project has been edited!')
+        return redirect(url_for('project', title=title))
+    else:
+        return render_template('edit_project.html', form=form, project=proj)
 
 
 @app.route("/notebank/<title>")
