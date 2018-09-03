@@ -168,7 +168,7 @@ def project(title):
 @login_required
 def editProject(title):
     proj = Project.query.filter_by(user_id=current_user.id, title=title).first()
-    form = EditProjectForm()
+    form = EditProjectForm(proj.title)
     if form.validate_on_submit():
         # take username and query database with it
         proj.title=form.title.data
@@ -183,7 +183,7 @@ def editProject(title):
         db.session.commit()
         print 'Your project has been edited!'
         flash('Your project has been edited!')
-        return redirect(url_for('project', title=title))
+        return redirect(url_for('project', title=proj.title))
     else:
         return render_template('edit_project.html', form=form, project=proj)
 

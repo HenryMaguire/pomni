@@ -64,13 +64,16 @@ class EditProjectForm(FlaskForm):
     cycle_num = IntegerField('How many cycles?')
 
     submit = SubmitField('Save changes')
-    """
-    def validate_title(self, title):
 
-        project = Project.query.filter_by(user_id=current_user.id, title=title.data).first()
-        if project.title == (project is not None):
-            pass
-            raise ValidationError("You've already got a project with that title!")"""
+    def __init__(self, original_title, *args, **kwargs):
+        super(EditProjectForm, self).__init__(*args, **kwargs)
+        self.original_title = original_title
+
+    def validate_title(self, title):
+        if title.data != self.original_title:
+            project = Project.query.filter_by(title=self.title.data).first()
+            if project is not None:
+                raise ValidationError("You've already got a project with that title!")
 
 class NextProjectStepForm(FlaskForm):
     end_work = SubmitField('Click to complete pomodoro!')
