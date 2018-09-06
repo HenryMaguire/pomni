@@ -100,7 +100,7 @@ Description: {{ project.description }}</h5>
 {% else %}
 <h4>Have a long break</h4>
 <p id="timer">{{ project.l_break_length }} : 00</p>
-
+<p>If you noted down any distractions, transfer them into an appropriate place.</p>
 <script src="{{ url_for('static', filename='js/timer.js') }}"></script>
 <script>
   var Minutes = {{ project.l_break_length }};
@@ -126,11 +126,6 @@ Description: {{ project.description }}</h5>
 <h5>{{recents[1].body}}</h5>
 <h6>{{recents[1].timestamp_end}}</h6>
 </div>
-</div>
-<div class="row">
-  <div class="col-md-3">
-  <a href="/delete_project/{{project.title}}"><h4>Delete project</h4></a>
-  </div>
 </div>
 </div>
 
