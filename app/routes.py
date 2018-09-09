@@ -20,7 +20,7 @@ def login():
         # take username and query database with it
         user = User.query.filter_by(username=form.username.data).first()
         if user is None or not user.check_password(form.password.data):
-            print 'Invalid username or password'
+            print('Invalid username or password')
             flash('Invalid username or password')
             return redirect(url_for('login'))
         else:
@@ -40,7 +40,7 @@ def register():
         user.set_password(form.password.data)
         db.session.add(user)
         db.session.commit()
-        print 'Congratulations, you are now registered!'
+        print('Congratulations, you are now registered!')
         flash('Congratulations, you are now registered!')
         return redirect(url_for('login'))
     return render_template('register.html', title='Register', form=form)
@@ -51,7 +51,7 @@ def deleteUser():
     if form.validate_on_submit():
         db.session.delete(current_user)
         db.session.commit()
-        print "{}, we're sorry to see you go!".format(current_user.username)
+        print ("{}, we're sorry to see you go!".format(current_user.username))
         flash("{}, we're sorry to see you go!".format(current_user.username))
         return redirect(url_for('login'))
     return render_template('delete_user.html', title='Delete account', form=form)
@@ -94,7 +94,7 @@ def newProject():
                        author=current_user)
         db.session.add(project)
         db.session.commit()
-        print 'Your project was created!'
+        print( 'Your project was created!')
         flash('Your project was created!')
         return redirect(url_for('dashboard'))
     else:
@@ -107,7 +107,7 @@ def deleteProject(title):
     if form.validate_on_submit():
         db.session.delete(p)
         db.session.commit()
-        print "{}, has been deleted.".format(p.id)
+        print ("{}, has been deleted.".format(p.id))
         flash("{}, has been deleted.".format(p.id))
         return redirect(url_for('dashboard'))
     return render_template('delete_project.html', title='Delete project',
@@ -126,7 +126,7 @@ def project(title):
         #proj.current_stage-=1 # weird double counting
         #db.session.commit()
         pom = 0
-        print proj.current_stage
+        print (proj.current_stage)
         if proj.current_stage == 0:
             proj.num_sessions+=1
             db.session.commit()
@@ -181,7 +181,7 @@ def editProject(title):
         proj.cycle_num=form.cycle_num.data
 
         db.session.commit()
-        print 'Your project has been edited!'
+        print( 'Your project has been edited!')
         flash('Your project has been edited!')
         return redirect(url_for('project', title=proj.title))
     else:
