@@ -11,6 +11,18 @@ The pomni web app written in Python, Flask and a little javascript.
 
 `venv/bin/pip install -r requirements.txt`
 
+- Set some environment variables
+
+`FLASK_APP=pomni.py`
+
+`export FLASK_ENV=development`
+
+- Make sure all the database initialisation and migration has been done with
+
+`flask db init`
+
+`flask db upgrade`
+
 - Run the application with `flask run`
 
 - View the app by typing localhost:5000 in your browser of choice.

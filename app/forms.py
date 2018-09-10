@@ -30,19 +30,29 @@ class RegistrationForm(FlaskForm):
         if user is not None:
             raise ValidationError('Please use a different email address.')
 
+class ResetPasswordRequestForm(FlaskForm):
+    email = StringField('Email', validators=[DataRequired(), Email()])
+    submit = SubmitField('Request Password Reset')
+
+class ResetPasswordForm(FlaskForm):
+    password = PasswordField('Password', validators=[DataRequired()])
+    password2 = PasswordField(
+        'Repeat Password', validators=[DataRequired(), EqualTo('password')])
+    submit = SubmitField('Request Password Reset')
+
 class DeleteUserForm(FlaskForm):
     submit = SubmitField('Please delete my account')
 
 class NewProjectForm(FlaskForm):
     title = StringField('Project title', validators=[DataRequired()])
     description = StringField('Project description', default='')
-    study_length = IntegerField('Study length?', default=25)
-    summary_length = IntegerField('Summary length?', default=2)
-    s_break_length = IntegerField('Short break length?', default=3)
-    l_break_length = IntegerField('Long break length?', default=25)
+    study_length = IntegerField('Study length?')
+    summary_length = IntegerField('Summary length?')
+    s_break_length = IntegerField('Short break length?')
+    l_break_length = IntegerField('Long break length?')
 
-    pom_num = IntegerField('How many poms before long break?', default=4)
-    cycle_num = IntegerField('How many cycles?', default=2 )
+    pom_num = IntegerField('How many poms before long break?')
+    cycle_num = IntegerField('How many cycles?')
 
     submit = SubmitField('Create project')
 

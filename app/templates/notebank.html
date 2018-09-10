@@ -30,26 +30,35 @@
     Description: {{ project.description }} <br>
     </div>
   </div>
-
+  <div class="row">
   {% for i in range(project.num_sessions) %}
-
     <h3>Session: {{i+1}} </h3>
+
     {% for pom in pomodoros.filter_by(session=i+1) %}
+    <div class="row">
     {% if pom.body|length>0 %}
       {% if pom.is_aim %}
-        <h4>Aim:<h4>
-          {% else %}
-        <h4>Summary:<h4>
-          {% endif %}
-
-        <h5>{{ pom.body }} </h5>
+      <div class="col-md-2"><h4>Aim :<h4></div>
+        <div class="col-md-8"><h5>{{ pom.body }} </h5></div>
+        <div class="col-md-2"> </div>
         <h6>
-        Logged: {{ pom.timestamp_end}}
-      </h6>
+        Started on {{ pom.timestamp_end.strftime('%d-%m-%Y') }} at {{ pom.timestamp_end.strftime('%H:%M:%S') }}.
+        </h6>
       {% else %}
-      {% endif %}
+
+        <div class="col-md-2"><h4>Summary :<h4></div>
+          <div class="col-md-8"><h5>{{ pom.body }} </h5></div>
+          <div class="col-md-2"> </div>
+          <h6>
+          Logged on {{ pom.timestamp_end.strftime('%d-%m-%Y') }} at {{ pom.timestamp_end.strftime('%H:%M:%S') }}.
+          </h6>
+          {% endif %}
+        {% else %}
+        {% endif %}
+      </div>
       {% endfor %}
-    </p>
     {% endfor %}
+  </div>
+</div>
 </body>
 </html>
