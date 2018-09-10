@@ -1,65 +1,44 @@
-<!DOCTYPE html>
-<html>
-<title>Pomni</title>
-<head>
-  <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='css/bootstrap.css') }}">
-</head>
-<body>
-<div class="container">
-  <div class="row">
-    <div class="col-md-6">
-      <h1>POMNI</h1>
-    </div>
-    <div class="row">
-      <div class="col-md-2">
 
-        <a href="/dashboard"><img src="https://image.flaticon.com/icons/svg/167/167283.svg" height="70" width="70"></a>
-      </div>
-      <div class="col-md-2">
-        <a href="{{ url_for('project', title=project.title, stage=project.current_stage)}}"><img src="https://image.flaticon.com/icons/svg/1082/1082408.svg" height="70" width="70"></a>
-      </div>
-    </div>
-  </div>
-  <h3>Edit project settings for: </h3><h2>{{project.title}}</h2>
+<title>Pomni - Edit project</title>
+{% extends "base.html" %}
+
+{% block app_content %}
+<a href="{{ url_for('project', title=project.title, stage=project.current_stage)}}"><img src="https://image.flaticon.com/icons/svg/1082/1082408.svg" height="70" width="70"></a>
+  <h3>Edit project settings for: {{project.title}}</h3>
   <form action="" method="post">
       {{ form.hidden_tag() }}
       <p>
-          {{ form.title.label }}<br>
-          {{ form.title(size=32, placeholder=project.title, default=project.title, value=project.title) }}<br>
+          {{ form.title.label }} : {{ form.title(size=32, placeholder=project.title, value=project.title) }}<br>
           {% for error in form.title.errors %}
           <span style="color: red;">[{{ error }}]</span>
           {% endfor %}
       </p>
       <p>
-          {{ form.description.label }}<br>
-          {{ form.description(size=64, placeholder=project.description, default=project.description, value=project.description) }}<br>
+          {{ form.description.label }} : {{ form.description(size=64, placeholder=project.description, default=project.description, value=project.description) }}<br>
       </p>
       <p>
-          {{ form.study_length.label}}<br>
-          {{ form.study_length(size=32, placeholder=project.study_length, default=project.study_length, value=project.study_length ) }}<br>
+          {{ form.study_length.label}} : {{ form.study_length(size=3, placeholder=project.study_length, default=project.study_length, value=project.study_length ) }}<br>
       </p>
       <p>
-          {{ form.summary_length.label }}<br>
-          {{ form.summary_length(size=32, placeholder=project.summary_length, default=project.summary_length, value=project.summary_length ) }}<br>
+          {{ form.summary_length.label }} : {{ form.summary_length(size=3, placeholder=project.summary_length, default=project.summary_length, value=project.summary_length ) }}<br>
       </p>
       <p>
-          {{ form.s_break_length.label}}<br>
-          {{ form.s_break_length(size=32, placeholder=project.s_break_length, default=project.s_break_length, value=project.s_break_length ) }}<br>
+          {{ form.s_break_length.label}} : {{ form.s_break_length(size=3, placeholder=project.s_break_length, default=project.s_break_length, value=project.s_break_length ) }}<br>
       </p>
       <p>
-          {{ form.l_break_length.label  }}<br>
-          {{ form.l_break_length(size=32, placeholder=project.l_break_length, default=project.l_break_length, value=project.l_break_length) }}<br>
+          {{ form.l_break_length.label  }} : {{ form.l_break_length(size=3, placeholder=project.l_break_length, default=project.l_break_length, value=project.l_break_length) }}<br>
       </p>
       <p>
-          {{ form.pom_num.label }}<br>
-          {{ form.pom_num(size=32, placeholder=project.pom_num, default=project.pom_num, value=project.pom_num ) }}<br>
+          {{ form.pom_num.label }} : {{ form.pom_num(size=3, placeholder=project.pom_num, default=project.pom_num, value=project.pom_num ) }}<br>
       </p>
       <p>
-          {{ form.cycle_num.label }}<br>
-          {{ form.cycle_num(size=32, placeholder=project.cycle_num, default=project.cycle_num, value=project.cycle_num ) }}<br>
+          {{ form.cycle_num.label }} : {{ form.cycle_num(size=3, placeholder=project.cycle_num, default=project.cycle_num, value=project.cycle_num ) }}<br>
       </p>
       <p>{{ form.submit() }}</p>
   </form>
-</div>
-</body>
-</html>
+  <div class="row">
+    <div class="col-md-3">
+    <a href="/delete_project/{{project.title}}"><h4>Delete project</h4></a>
+    </div>
+  </div>
+{% endblock %}

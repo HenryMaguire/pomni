@@ -65,12 +65,12 @@ class NewProjectForm(FlaskForm):
 class EditProjectForm(FlaskForm):
     title = StringField('Project title', validators=[DataRequired()])
     description = StringField('Project description')
-    study_length = IntegerField('Study length?')
-    summary_length = IntegerField('Summary length?')
-    s_break_length = IntegerField('Short break length?')
-    l_break_length = IntegerField('Long break length?')
+    study_length = IntegerField('Study length')
+    summary_length = IntegerField('Summary length')
+    s_break_length = IntegerField('Short break length')
+    l_break_length = IntegerField('Long break length')
 
-    pom_num = IntegerField('How many poms before long break?')
+    pom_num = IntegerField('Repetitions before long break?')
     cycle_num = IntegerField('How many cycles?')
 
     submit = SubmitField('Save changes')
@@ -86,8 +86,8 @@ class EditProjectForm(FlaskForm):
                 raise ValidationError("You've already got a project with that title!")
 
 class NextProjectStepForm(FlaskForm):
-    end_work = SubmitField('Click to complete pomodoro!')
-    end_s_break = SubmitField("Click to go again!")
+    end_work = SubmitField('Click to write a summary!')
+    end_s_break = SubmitField("Click to get to work!")
     end_l_break = SubmitField('Click for another block!')
 
 class DeleteProjectForm(FlaskForm):

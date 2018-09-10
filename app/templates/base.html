@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+  {% block head %}
+  <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='css/bootstrap.css') }}">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  {% if title %}
+  <title>{{ title }} - Pomni</title>
+  {% else %}
+  <title>Welcome to Pomni</title>
+  {% endif %}
+{% endblock %}
+</head>
+
+<body>
+{% block content %}
+    <div class="container">
+      <br>
+      <div class="row">
+        <div class="col-md-1">
+          <a href="/dashboard"><img src="https://image.flaticon.com/icons/svg/167/167283.svg" height="70" width="70"></a>
+          </div>
+        <div class="col-md-1">
+          <h1>POMNI</h1>
+          </div>
+        <div class="col-md-6">
+        </div>
+        <div class="col-md-3">
+
+        </div>
+      </div>
+      <div>
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            {% for message in messages %}
+            <div class="alert alert-info" role="alert">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+        {% endwith %}
+
+        {# application content needs to be provided in the app_content block #}
+        {% block app_content %}{% endblock %}
+        </div>
+    </div>
+{% endblock %}
+</body>
+</html>

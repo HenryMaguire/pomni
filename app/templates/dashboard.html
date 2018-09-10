@@ -1,47 +1,53 @@
-<!DOCTYPE html>
-<html>
-<title>Pomni</title>
-<head>
-  <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='css/bootstrap.css') }}">
-</head>
-<body>
-  <div class="container">
-    <h1>POMNI</h1>
-    <div class="row">
-      <div class="col-md-6">
-        <a href="/dashboard"><img src="https://image.flaticon.com/icons/svg/167/167283.svg" height="70" width="70"></a>
-        </div>
-        <div class="col-md-6">
-        <a href="/logout"><img src="https://image.flaticon.com/icons/svg/126/126467.svg" height="42" width="42"></a>
-        <a href="/delete_user"><img src="http://icons.iconarchive.com/icons/custom-icon-design/flatastic-1/256/delete-1-icon.png" height="42" width="42"></a>
-        </div>
+
+{% extends "base.html" %}
+{% block app_content %}
+    <h2>Dashboard</h2>
+  <div class="row">
+    {% if has_projects %}
+    {% for proj in projects %}
+    <div class="col-md-3">
+    <a href="/project/{{proj.title}}"><h3>Project {{ proj.id }}: {{ proj.title }}</h3></a>
+    <p>Description: {{ proj.description }}
+    </p>
+    <p><a href="/project/{{proj.title}}"><img src="https://image.flaticon.com/icons/svg/993/993416.svg" height="100" width="100"></a>
+    </p>
+
+    <p>Last updated: {{ proj.timestamp }}
+    </p>
   </div>
-
-  <h2>Dashboard</h2>
-<div class="row">
-  {% if has_projects %}
-  {% for proj in projects %}
-  <div class="col-md-3">
-  <a href="/project/{{proj.title}}"><h3>Project {{ proj.id }}: {{ proj.title }}</h3></a>
-  <p>Description: {{ proj.description }}
-  </p>
-  <p><a href="/project/{{proj.title}}"><img src="https://image.flaticon.com/icons/svg/993/993416.svg" height="100" width="100"></a>
-  </p>
-
-  <p>Last updated: {{ proj.timestamp }}
-  </p>
-</div>
-  {% endfor %}
-<div class="row">
-  <p><h4><a href="/new_project/">Create new project</a></h4>
+    {% endfor %}
+  </div>
+  <div class="row">
+    <div class="col-md-3">
+      <h3><a href="/new_project/">Create new project</a></h3>
+      </div>
+    <div class="col-md-6">
     </div>
-  </p>
-  {% else %}
-  <h4>You don't seem to have started any projects. <a href="/new_project/">Make one?</a></h4>
-  {% endif %}
+    <div class="col-md-3">
+      <div class="row">
+        User Settings
+      <a href="/user_settings"><img src="https://image.flaticon.com/icons/svg/126/126472.svg" height="70" width="70"></a>
+      </div>
+    </div>
 
-</div>
-</div>
+  </div>
+    {% else %}
+    <h4>You don't seem to have started any projects. <a href="/new_project/">Make one?</a></h4>
+    <div class="row">
+      <div class="col-md-3">
+        </div>
+      <div class="col-md-6">
+      </div>
+      <div class="col-md-3">
+        <div class="row">
+          User Settings
+        <a href="/user_settings"><img src="https://image.flaticon.com/icons/svg/126/126472.svg" height="70" width="70"></a>
+        </div>
+      </div>
 
-</body>
-</html>
+    </div>
+    {% endif %}
+
+
+
+{% endblock %}

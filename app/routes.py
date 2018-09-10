@@ -89,6 +89,10 @@ def deleteUser():
         return redirect(url_for('login'))
     return render_template('delete_user.html', title='Delete account', form=form)
 
+@app.route('/user_settings')
+def userSettings():
+    return render_template('user_settings.html', user=current_user)
+
 @app.route('/logout')
 def logout():
     logout_user()
