@@ -217,7 +217,7 @@ body {
   font-size: 14px;
   line-height: 1.42857143;
   color: #333333;
-  background-color: #ffffff;
+  background-color: #E4E4E4;
 }
 input,
 button,
@@ -230,6 +230,11 @@ textarea {
 a {
   color: #337ab7;
   text-decoration: none;
+}
+#timer{
+    color: #337ab7;
+    font-size: 30px;
+    background-color: inherit;
 }
 a:hover,
 a:focus {
@@ -658,11 +663,13 @@ address {
   font-style: normal;
   line-height: 1.42857143;
 }
+
 .container {
   margin-right: auto;
   margin-left: auto;
-  padding-left: 15px;
-  padding-right: 15px;
+  padding-left: 30px;
+  padding-right: 30px;
+  background-color: #F9FCFE;
 }
 @media (min-width: 768px) {
   .container {
@@ -2824,6 +2831,7 @@ select[multiple].input-group-sm > .input-group-btn > .btn {
 }
 .navbar {
   position: relative;
+  padding-left: 30px;
   min-height: 40px;
   margin-bottom: 20px;
   border: 1px solid transparent;
@@ -2891,6 +2899,7 @@ select[multiple].input-group-sm > .input-group-btn > .btn {
     max-height: 200px;
   }
 }
+
 .container > .navbar-header,
 .container-fluid > .navbar-header,
 .container > .navbar-collapse,

@@ -1,12 +1,16 @@
 <title>Pomni - Settings</title>
 {% extends "base.html" %}
 
+{% block page_title %}
+<h1>Hi, {{ user.username }}!</h1>
+{% endblock %}
+
 {% block app_content %}
-    <h1>Hi, {{ user.username }}!</h1>
     <div >
    <a href="/logout"><h3>Logout</h3> <img src="https://image.flaticon.com/icons/svg/126/126467.svg" height="42" width="42"></a>
    </div>
    <div >
     <a href="/delete_user"> <h3>Delete profile</h3><img src="http://icons.iconarchive.com/icons/custom-icon-design/flatastic-1/256/delete-1-icon.png" height="42" width="42"></a>
     </div>
+    <h4>If you desperately want to change your password, please logout and follow "forgot password".</h4>
 {% endblock %}

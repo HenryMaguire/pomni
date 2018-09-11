@@ -74,7 +74,7 @@ def reset_password(token):
     if form.validate_on_submit():
         user.set_password(form.password.data)
         db.session.commit()
-        flash('Your password has been reset.')
+        flash('Your password has been changed.')
         return redirect(url_for('login'))
     return render_template('reset_password.html', form=form)
 
@@ -96,6 +96,7 @@ def userSettings():
 @app.route('/logout')
 def logout():
     logout_user()
+    flash("See you again soon!")
     return redirect(url_for('login'))
 
 @app.route("/dashboard/", methods=['GET', 'POST'])
@@ -195,7 +196,9 @@ def project(title):
                                             is_aim=True).first()
     most_recent = None
     try:
-        most_recent = poms.order_by(desc(Pomodoro.timestamp_end)).all()[0]
+        recent_first = poms.order_by(desc(Pomodoro.timestamp_end)).all()
+        print
+        most_recent = [i for i in recent_first if len(i.body)>0 ][0]
     except:
         pass
     return render_template("project.html", step_form=step_form, form=form,

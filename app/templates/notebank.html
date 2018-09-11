@@ -2,18 +2,30 @@
 
 {% extends "base.html" %}
 
-{% block app_content %}
+{% block page_title %}
 <div class="row">
-<h3>PROJECT: {{ project.title }} </h3>
-  <a href="{{ url_for('project', title=project.title)}}"><img src="https://image.flaticon.com/icons/svg/1082/1082408.svg" height="70" width="70"></a>
+  <div class="col-md-3">
+<h2>Notebank: {{ project.title }} </h2>
+<div class="row">
+  Started at {{ project.timestamp.strftime('%H:%M:%S') }} on {{ project.timestamp.strftime('%d/%m/%y') }}.<br>
+  Description: {{ project.description }}
 </div>
-<div class="row">
+    </div>
   <div class="col-md-6">
-
-  Created: {{ project.timestamp }} <br>
-  Description: {{ project.description }} <br>
   </div>
+  <div class="col-md-3">
+    <a href="{{ url_for('project', title=project.title)}}"><img src="https://image.flaticon.com/icons/svg/1082/1082408.svg" height="70" width="70">
+      <br><h5>Back to project</h5>
+    </a>
+
+  </div>
+
 </div>
+
+{% endblock %}
+
+{% block app_content %}
+
 <div class="row">
 {% for i in range(project.num_sessions) %}
   <h3>Session: {{i+1}} </h3>
@@ -26,7 +38,7 @@
       <div class="col-md-8"><h5>{{ pom.body }} </h5></div>
       <div class="col-md-2"> </div>
       <h6>
-      Started on {{ pom.timestamp_end.strftime('%d-%m-%Y') }} at {{ pom.timestamp_end.strftime('%H:%M:%S') }}.
+      Started on {{ pom.timestamp_end.strftime('%d/%m/%y') }} at {{ pom.timestamp_end.strftime('%H:%M:%S') }}.
       </h6>
     {% else %}
 
@@ -34,7 +46,7 @@
         <div class="col-md-8"><h5>{{ pom.body }} </h5></div>
         <div class="col-md-2"> </div>
         <h6>
-        Logged on {{ pom.timestamp_end.strftime('%d-%m-%Y') }} at {{ pom.timestamp_end.strftime('%H:%M:%S') }}.
+        Logged on {{ pom.timestamp_end.strftime('%d/%m/%y') }} at {{ pom.timestamp_end.strftime('%H:%M:%S') }}.
         </h6>
         {% endif %}
       {% else %}

@@ -41,18 +41,18 @@ class ResetPasswordForm(FlaskForm):
     submit = SubmitField('Request Password Reset')
 
 class DeleteUserForm(FlaskForm):
-    submit = SubmitField('Please delete my account')
+    submit = SubmitField('Yes, please delete my account.')
 
 class NewProjectForm(FlaskForm):
     title = StringField('Project title', validators=[DataRequired()])
     description = StringField('Project description', default='')
-    study_length = IntegerField('Study length?')
-    summary_length = IntegerField('Summary length?')
-    s_break_length = IntegerField('Short break length?')
-    l_break_length = IntegerField('Long break length?')
+    study_length = IntegerField('Study length?', validators=[DataRequired(message="Please input how many minutes you will work for.")])
+    summary_length = IntegerField('Summary length?', validators=[DataRequired()])
+    s_break_length = IntegerField('Short break length?', validators=[DataRequired()])
+    l_break_length = IntegerField('Long break length?', validators=[DataRequired()])
 
-    pom_num = IntegerField('How many poms before long break?')
-    cycle_num = IntegerField('How many cycles?')
+    pom_num = IntegerField('How many poms before long break?', validators=[DataRequired()])
+    cycle_num = IntegerField('How many cycles?', validators=[DataRequired()])
 
     submit = SubmitField('Create project')
 
