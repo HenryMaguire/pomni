@@ -18,6 +18,7 @@ def login():
     if current_user.is_authenticated:
         # if they're logged in already go to dash
         return redirect(url_for('dashboard'))
+    
     form = LoginForm()
     if form.validate_on_submit():
         # take username and query database with it
@@ -76,7 +77,8 @@ def reset_password(token):
         db.session.commit()
         flash('Your password has been changed.')
         return redirect(url_for('login'))
-    return render_template('reset_password.html', form=form)
+    return render_template('reset_password.html',
+                           title='Reset Password', form=form)
 
 @app.route("/delete_user", methods=['GET', 'POST'])
 def deleteUser():
@@ -109,12 +111,12 @@ def dashboard():
         has_projects = False
         return render_template('dashboard.html',
                                 projects=projects,
-                                has_projects=has_projects)
+                                has_projects=has_projects, title='Dashboard')
     else:
         has_projects = True
         return render_template('dashboard.html',
                                 projects=projects,
-                                has_projects=has_projects)
+                                has_projects=has_projects, title='Dashboard')
 
 @app.route("/new_project/", methods=['GET', 'POST'])
 @login_required
@@ -137,7 +139,7 @@ def newProject():
         flash('Your project was created!')
         return redirect(url_for('dashboard'))
     else:
-        return render_template('new_project.html', form=form)
+        return render_template('new_project.html', form=form, title='Project creation')
 
 @app.route("/delete_project/<title>", methods=['GET', 'POST'])
 def deleteProject(title):
@@ -197,10 +199,11 @@ def project(title):
     most_recent = None
     try:
         recent_first = poms.order_by(desc(Pomodoro.timestamp_end)).all()
-        print
-        most_recent = [i for i in recent_first if len(i.body)>0 ][0]
-    except:
-        pass
+        recent_first_non_blank = [i for i in recent_first if len(i.body)>0]
+        if len(recent_first_non_blank)>0:
+            most_recent = recent_first_non_blank[0]
+    except Exception as err:
+        print (err)
     return render_template("project.html", step_form=step_form, form=form,
                             project=proj, pomodoros=poms,
                             title=title, recents = [current_aim, most_recent])
@@ -226,7 +229,8 @@ def editProject(title):
         flash('Your project has been edited!')
         return redirect(url_for('project', title=proj.title))
     else:
-        return render_template('edit_project.html', form=form, project=proj)
+        return render_template('edit_project.html', form=form, project=proj,
+                                                        title='Edit project')
 
 
 @app.route("/notebank/<title>")
@@ -234,4 +238,4 @@ def editProject(title):
 def notebank(title):
     proj = Project.query.filter_by(user_id=current_user.id, title=title).first()
     poms = proj.pomodoros
-    return render_template('notebank.html', project=proj, pomodoros=poms)
+    return render_template('notebank.html', project=proj, pomodoros=poms, title=proj.title)

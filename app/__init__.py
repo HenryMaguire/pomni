@@ -10,13 +10,16 @@ from logging.handlers import SMTPHandler
 
 
 app = Flask(__name__)
-
-app.debug = True
+""",
+            static_url_path='',
+            static_folder='web/static',
+            template_folder='web/templates'"""
 app.config.from_object(Config)
+
 mail = Mail(app)
 login = LoginManager(app)
 login.login_view = 'login' #
-app.secret_key = 'some_secret'
+
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 
@@ -26,7 +29,6 @@ from app import routes, models
 
 if not app.debug:
     if app.config['MAIL_SERVER']:
-        print("Yes!")
         auth = None
         if app.config['MAIL_USERNAME'] or app.config['MAIL_PASSWORD']:
             auth = (app.config['MAIL_USERNAME'], app.config['MAIL_PASSWORD'])

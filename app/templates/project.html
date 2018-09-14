@@ -1,15 +1,11 @@
-
-<title>{{project.title}} - Pomni</title>
-
-<head>
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-  <audio id="over_music">
-      <source src="{{ url_for('static', filename='ding-ding.mp3') }}">
-  </audio>
-</head>
-
 {% extends "base.html" %}
 
+{% block head_ext %}
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<audio id="over_music">
+    <source src="{{ url_for('static', filename='ding-ding.mp3') }}">
+</audio>
+{% endblock %}
 
 {% block app_content %}
 
@@ -53,7 +49,6 @@ Description: {{ project.description }}</h4>
 <h4>Work!</h4>
 
 <p id="timer">{{ project.study_length }} : 00</p>
-<script src="{{ url_for('static', filename='js/timer.js') }}"></script>
 <script>
   var Minutes = {{ project.study_length }};
 </script>
@@ -78,14 +73,11 @@ Description: {{ project.description }}</h4>
 
 
 <script src="{{ url_for('static', filename='js/timer.js') }}"></script>
-<script>
-  var Minutes = {{ project.summary_length }};
-</script>
 
 {% elif ((project.current_stage-3)%3==0 ) and (project.current_stage < 3*project.pom_num ) %}
 <h4>Have a short break</h4>
 <p id="timer">0{{ project.s_break_length }} : 00</p>
-<script src="{{ url_for('static', filename='js/timer.js') }}"></script>
+
 <script>
   var Minutes = {{ project.s_break_length }};
 </script>
@@ -100,7 +92,6 @@ Description: {{ project.description }}</h4>
 <h4>Have a long break</h4>
 <p id="timer">{{ project.l_break_length }} : 00</p>
 
-<script src="{{ url_for('static', filename='js/timer.js') }}"></script>
 <script>
   var Minutes = {{ project.l_break_length }};
 </script>
@@ -110,7 +101,7 @@ Description: {{ project.description }}</h4>
     <p>{{ step_form.end_l_break() }}</p>
 </form>
 {% endif %}
-<p>You're on step {{project.current_stage}} out of {{3*project.pom_num}}.</p>
+<p style="color:Grey;">You're on step {{project.current_stage+1}} out of {{3*project.pom_num}}.</p>
 
 </div>
 </div>
@@ -126,13 +117,23 @@ Description: {{ project.description }}</h4>
 </div>
 <div class="row">
 <h4>Current aim:</h4>
-<h5>{{recents[0].body}}</h5>
-
-<h6>Logged at {{recents[0].timestamp_end.strftime('%H:%M:%S') }} on {{ recents[0].timestamp_end.strftime('%d/%m/%y') }}</h6>
+{% if recents[0] %}
+  <h5>{{recents[0].body}}</h5>
+  <h6>Logged at {{recents[0].timestamp_end.strftime('%H:%M:%S') }} on {{ recents[0].timestamp_end.strftime('%d/%m/%y') }}</h6>
+{% else %}
+  <h5></h5>
+{% endif %}
 <h4>Recent activity: </h4>
+{% if recents[1] %}
 <h5>{{recents[1].body}}</h5>
 <h6>Logged at {{ recents[1].timestamp_end.strftime('%H:%M:%S') }} on {{ recents[1].timestamp_end.strftime('%d/%m/%y') }}</h6>
+{% else %}
+  <h5>You haven't logged any summaries yet.</h5>
+{% endif %}
 </div>
 </div>
 
+{% block footer %}
+<script src="{{ url_for('static', filename='js/timer.js') }}"></script>
+{% endblock %}
 {% endblock %}

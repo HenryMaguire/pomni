@@ -1,14 +1,18 @@
 <!DOCTYPE html>
 <html lang='en'>
 <head>
-  {% block head %}
-  <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='css/bootstrap.css') }}">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  {% if title %}
-  <title>{{ title }} - Pomni</title>
-  {% else %}
-  <title>Pomni</title>
-  {% endif %}
+{% block head %}
+      {% if title %}
+        <title>{{ title }} - Pomni</title>
+      {% else %}
+        <title>Pomni</title>
+      {% endif %}
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static', filename="css/bootstrap.css")}}">
+
+    {% block head_ext %}{% endblock %}
 {% endblock %}
 </head>
 
@@ -43,9 +47,13 @@
         {% endwith %}
 
         {# application content needs to be provided in the app_content block #}
-        {% block app_content %}{% endblock %}
+        {% block app_content %}
+        {% endblock %}
         </div>
     </div>
+{% endblock %}
+
+{% block footer %}
 {% endblock %}
 </body>
 </html>
