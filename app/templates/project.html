@@ -1,6 +1,9 @@
 {% extends "base.html" %}
 
 {% block app_content %}
+<script>
+    var stage = {{ project.current_stage }};
+  </script>
 <div class="row">
 <div class="display-4"> {{ project.title }} </div>
 </div>

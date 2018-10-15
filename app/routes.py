@@ -1,4 +1,4 @@
-from flask import render_template, flash, redirect, url_for, get_flashed_messages
+from flask import render_template, flash, redirect, url_for, get_flashed_messages, jsonify, request
 from app import app, db
 from app.forms import LoginForm, RegistrationForm, DeleteUserForm, NewProjectForm
 from app.forms import ResetPasswordRequestForm, ResetPasswordForm
@@ -9,6 +9,10 @@ from app.models import User, Project, Pomodoro
 from datetime import datetime
 from sqlalchemy import desc
 
+
+@app.route("/_new_pomodoro", methods=['POST'])
+def new_pomodoro():
+    return jsonify({"hello" : "there"})
 
 @app.route("/", methods=['GET', 'POST'])
 @app.route("/login/", methods=['GET', 'POST'])
@@ -156,6 +160,45 @@ def deleteProject(title):
 
 @app.route("/project/<title>", methods=['GET', 'POST'])
 @login_required
+def project(title):
+    proj = Project.query.filter_by(user_id=current_user.id, title=title).first()
+    form = NewPomodoroForm()
+    step_form = NextProjectStepForm()
+    if proj.current_stage > 3*proj.pom_num:
+        proj.reset_stage()
+
+    if form.validate_on_submit():
+        #proj.current_stage-=1 # weird double counting
+        #db.session.commit()
+        pom = 0
+        print (proj.current_stage)
+        if proj.current_stage == 0:
+            proj.num_sessions+=1
+            db.session.commit()
+
+            pom = Pomodoro(body = form.aim_body.data, session=proj.num_sessions, is_aim = True,
+                           author=current_user, project=proj, timestamp_end = datetime.utcnow())
+            proj.current_stage+=1
+            db.session.commit()
+            db.session.add(pom)
+            db.session.commit()
+            return redirect(url_for("project", title=title))
+    poms = Pomodoro.query.filter_by(project=proj) # print latest session
+    current_aim =  Pomodoro.query.filter_by(project=proj,
+                                            session=proj.num_sessions,
+                                            is_aim=True).first()
+    most_recent = None
+    try:
+        recent_first = poms.order_by(desc(Pomodoro.timestamp_end)).all()
+        recent_first_non_blank = [i for i in recent_first if len(i.body)>0]
+        if len(recent_first_non_blank)>0:
+            most_recent = recent_first_non_blank[0]
+    except Exception as err:
+        print (err)
+    return render_template("project.html", step_form=step_form, form=form,
+                            project=proj, pomodoros=poms,
+                            title=title, recents = [current_aim, most_recent])
+
 def project(title):
     proj = Project.query.filter_by(user_id=current_user.id, title=title).first()
     form = NewPomodoroForm()

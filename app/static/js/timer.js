@@ -26,40 +26,34 @@ $(document).ready(() => {function startTimer(duration) {
     
     function stageHTML(stage, pom_num, block_num){
         // create HTML given by relationship between stage, pom_num and block_num. i.e if (stage-1)%3==0 and (stage < 3*pom_num) send "work" parameters = {header: "Work!", timerOn: True, formOn: False, buttonText: "Skip", "buttonColour: "yellow"}
-    }
-    function changeTimer(stage) {
+    };
+    function changeTimer(response) {
         // given `stage` we need to update the db with the changes, receive any info we need to update the page with new timer
-        var html_list = stageHTML(stage, num_poms);
-        $("#summary_header").text(html_list[0]);
-        $("#timer").classList.add(html_list[1]);
-    }
+        //var html_list = stageHTML(stage, num_poms);
+        //$("#summary_header").text(html_list[0]);
+        //$("#timer").classList.add(html_list[1]);
+        console.log(response)
+    };
         
-        startTimer(Minutes);
-})
+
     function updateDB(stage) {
         // on click of submit button, take form and send it to the db
         // we definitely need the end timestamp and the stage 
         // `stage` must be incremented serverside, so that if the user exits, we know which stage they are actually on.
-        $('#submit').bind('click', function() {
-        $.getJSON('/_new_pomodoro', {
-            summary: $('input[name="summary"]').val(),
+        $('#submit').bind('click', function(e) {
+        e.preventDefault();
+        var summary_text = document.getElementById("summary").value;
+        $.post('/_new_pomodoro', {
+            summary: summary_text,
             timestamp: new Date(),
             stage: stage
-        }, function(data) {
-            changeTimer(data)
-        });
-        return false;
-        });
-}
+        }).done(function(response) {changeTimer(response)}
+            ).fail(function() {
+                $('#summary_header').text("Error: Could not contact server.");
+                });
+            });
+        }
 
-  $(function() {
-    $('a#calculate').bind('click', function() {
-      $.getJSON($SCRIPT_ROOT + '/_add_numbers', {
-        a: $('input[name="a"]').val(),
-        b: $('input[name="b"]').val()
-      }, function(data) {
-        $("#result").text(data.result);
-      });
-      return false;
-    });
-  });
+
+    updateDB(stage)
+})
