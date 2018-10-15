@@ -1,49 +1,159 @@
 {% extends "base.html" %}
 
-{% block head_ext %}
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-<audio id="over_music">
-    <source src="{{ url_for('static', filename='ding-ding.mp3') }}">
-</audio>
-{% endblock %}
-
 {% block app_content %}
-
 <div class="row">
-<div class="col-md-6">
-<h2>Project: {{ project.title }} </h2>
+<div class="display-4"> {{ project.title }} </div>
+</div>
+<div class="row">
+    <p class="lead"> "{{ project.description }}"</p>
+</div>  
+<div class="row">
+    <div class="btn-group d-inline">
+        <span data-toggle="tooltip" data-placement="right" title="Change project settings">
+            <a class="btn btn-outline-primary" href="{{ url_for('editProject', title=project.title)}}"><i class="fas fa-cogs"></i> </a>
+          </span>
+            <span data-toggle="tooltip" data-placement="right" title="Need some guidance?">
+              <button class="btn btn-outline-primary" data-toggle="modal" data-target="#aiModal"><i class="fas fa-user-friends"></i>
+              </button>
+            </span>
+    </div> <p class="text-muted text-right d-inline">
+      - Started: {{ project.timestamp.strftime('%H:%M:%S') }} on {{ project.timestamp.strftime('%d/%m/%y') }}.
+    </p>
+</div>  
 
-<h4>
-Description: {{ project.description }}</h4>
-<h5>
-  Started: {{ project.timestamp.strftime('%H:%M:%S') }} on {{ project.timestamp.strftime('%d/%m/%y') }}.
-</h5>
-
-<div class="col-md-5" align=center style="border:1px solid #cecece;">
-  <a href="{{ url_for('editProject', title=project.title)}}">
-    <img src="https://image.flaticon.com/icons/svg/126/126472.svg" height="20" width="20"> Change project settings</h5>
-  </a>
-</div><div class="col-md-7"></div>
+<!-- THE APP -->
+<div class="container">
+<div class="row">
+  <div class="col-md-4 py-4 align-center">
+    {% if project.current_stage == 0  %}
+  
+    <div class="form-group">
+      <label for="message"> <p class="lead" id="summary_title"> What are your aims for this session?</p></label>
+      <textarea class="form-control" id="summary" rows="3" autofocus=true name="summary"></textarea>
+    </div>
+    <div class="timer d-none" id="timer"></div>
+    <a href="" class="btn btn-secondary btn-block" id="submit">Submit</a>
+    <div class="progress my-2" >
+        <div class="progress-bar bg-info" style="width:{{(100*(project.current_stage+1)/(3*project.pom_num)) | int}}%;">{{(100*(project.current_stage+1)/(3*project.pom_num)) | int}}%</div>
+    </div>
+    <div class="text-center py-1">
+        <button class="btn btn-outline-info py-0" data-toggle="modal" data-target="#resetModal">
+      Reset </button>
+    </div>
+  </div>
 </div>
 
-<div class="col-md-3">
-{% if project.current_stage == 0  %}
 
-<form action="" method="post">
+<!-- PREVIOUS ACTIVITY  -->
+<div class="row">
+  <div class="col-md-6 border-top my-3">
+    <div class="row my-3">
+      <div class="col-md-6">
+        <p class="lead">Current aim:</p>
+        <p id="current-aim"></p>
+      </div>
+      <div class="col-md-6">
+        <p class="lead">Recent activity: </p>
+        <p id="last-summary">You haven't logged any summaries yet.</p>
+      </div>
+    </div>
+    <div class="row">
+          <a class="btn btn-outline-secondary btn-block py-0" href="{{ url_for('notebank', title=project.title)}}">
+      <div class="d-inline-block">
+      <img class="d-inline" src="https://image.flaticon.com/icons/svg/167/167755.svg" height="40" width="40">
+            <p class="d-inline align-middle">Notebank</p></div>
+          </a>
+      </div>
+    </div>
+</div>
+</div>
+<!-- MODALS -->
+
+<!-- MODAL AI ASSISTANT-->
+<div class="modal" id="aiModal">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">AI Assistant</h5>
+          <button class="close" data-dismiss="modal">&times;</button>
+        </div>
+        <div class="modal-body">
+          This feature is coming soon!
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-secondary" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<!-- MODAL SESSION RESET -->
+<div class="modal" id="resetModal">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Session reset</h5>
+          <button class="close" data-dismiss="modal">&times;</button>
+        </div>
+        <div class="modal-body">
+          <p class="lead"> Are you sure you want to reset the session? </p>
+          <div class="p">
+            Try to finish the task you <em>originally</em> set out to achieve.
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-secondary mr-auto" data-dismiss="modal">Close</button>
+          <button class="btn btn-danger" data-dismiss="modal">Reset</button>
+          
+        </div>
+      </div>
+    </div>
+  </div>
+<!-- OLD VERSION OF APP -->
+<div class="row" hidden>
+    <div class="col-md-4">
+    <form action="" method="post">
     {{ form.hidden_tag() }}
-<p>
+  <p>
     {{ form.aim_body.label }}<br>
-    {{ form.aim_body(size=64, autofocus=true) }}<br>
+    {{ form.aim_body(size=64) }}<br>
     {% for error in form.aim_body.errors %}
     <span style="color: red;">[{{ error }}]</span>
     {% endfor %}
-</p>
-
-<div id="submit-button">{{ form.submit() }}</div>
-</form>
-
-
-
+  </p>
+  
+  <div id="submit-button">{{ form.submit() }}</div>
+  </form>
+  </div>
+  <div class="col-md-6 offset-md-5">
+      <div class="row">
+        <div class="col-md-6">
+          <h4>Current aim:</h4>
+          {% if recents[0] %}
+            <h5>{{recents[0].body}}</h5>
+            <h6>Logged at {{recents[0].timestamp_end.strftime('%H:%M:%S') }} on {{ recents[0].timestamp_end.strftime('%d/%m/%y') }}</h6>
+          {% else %}
+            <h5></h5>
+          {% endif %}
+        </div>
+        <div class="col-md-6">
+          <h4>Recent activity: </h4>
+          {% if recents[1] %}
+          <h5>{{recents[1].body}}</h5>
+          <h6>Logged at {{ recents[1].timestamp_end.strftime('%H:%M:%S') }} on {{ recents[1].timestamp_end.strftime('%d/%m/%y') }}</h6>
+          {% else %}
+            <p id="last-summary">You haven't logged any summaries yet.</p>
+          {% endif %}
+        </div>
+      </div>
+      <div class="row">
+            <a class="btn btn-outline-secondary btn-block py-0" href="{{ url_for('notebank', title=project.title)}}">
+        <div class="d-inline-block">
+        <img class="d-inline" src="https://image.flaticon.com/icons/svg/167/167755.svg" height="40" width="40">
+              <p class="d-inline align-middle">Notebank</p></div>
+            </a>
+        </div>
+      </div>
 
 {% elif ((project.current_stage-1)%3==0 ) and (project.current_stage < 3*project.pom_num )  %}
 <h4>Work!</h4>
@@ -105,35 +215,12 @@ Description: {{ project.description }}</h4>
 
 </div>
 </div>
-<div class="col-md-6">
-<div class="row">
 
-<a href="{{ url_for('notebank', title=project.title)}}">
 
-  <div class="col-md-2"> <img src="https://image.flaticon.com/icons/svg/167/167755.svg" height="60" width="60"></div>
-  <div class="col-md-2"><h3>NOTEBANK</h3></div>
-  <div class="col-md-8"></div>
-</a>
-</div>
-<div class="row">
-<h4>Current aim:</h4>
-{% if recents[0] %}
-  <h5>{{recents[0].body}}</h5>
-  <h6>Logged at {{recents[0].timestamp_end.strftime('%H:%M:%S') }} on {{ recents[0].timestamp_end.strftime('%d/%m/%y') }}</h6>
-{% else %}
-  <h5></h5>
-{% endif %}
-<h4>Recent activity: </h4>
-{% if recents[1] %}
-<h5>{{recents[1].body}}</h5>
-<h6>Logged at {{ recents[1].timestamp_end.strftime('%H:%M:%S') }} on {{ recents[1].timestamp_end.strftime('%d/%m/%y') }}</h6>
-{% else %}
-  <h5>You haven't logged any summaries yet.</h5>
-{% endif %}
-</div>
-</div>
+
+{% endblock %}
 
 {% block footer %}
-<script src="{{ url_for('static', filename='js/timer.js') }}"></script>
-{% endblock %}
+
+<script src="{{ url_for('static', filename='js/timer.min.js') }}"></script>
 {% endblock %}
