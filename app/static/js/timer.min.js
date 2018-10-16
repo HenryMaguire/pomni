@@ -27,9 +27,10 @@ $(document).ready(() => {
           if (--timer < 0) {
             clearInterval(refresh);  // exit refresh loop
             var music = $("#over_music")[0];
+            music.addEventListener('ended', showAlert);
             music.currentTime=0;
             music.play();
-            music.addEventListener('ended', showAlert);
+            
           };
       }, 1000);
 }
