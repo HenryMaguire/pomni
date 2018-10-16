@@ -9,10 +9,60 @@ from app.models import User, Project, Pomodoro
 from datetime import datetime
 from sqlalchemy import desc
 
+@app.route("/_get_response_json/<stage>/<pom_num>")
+def get_response_json(stage, pom_num):
+    stage, pom_num = int(stage), int(pom_num)
+    time_dict = request.form
+    if len(request.form)==0:
+        time_dict = {'lbt':"0", 'st':"0", 'wt':"0",'sbt':"0"}
+        
+    response_dict = {}
+    print (stage)
+    if stage==-1:
+        # let's begin
+        response_dict = {"stage" : stage, "header": "Are you ready to begin?",
+                        "button" : "Begin", "show_timer" : False, 
+                        "show_form" : False, "time": time_dict['lbt']}
+    elif ((stage==0) and (stage < (3*pom_num))):
+        # Aim time 
+        response_dict = {"stage" : stage, "header": "What are your aims for this session?",
+                        "button" : "Submit", "show_timer" : True, 
+                        "show_form" : True, "time": time_dict['st']}
+    elif (((stage-1)%3==0) and (stage < (3*pom_num))):
+        # work time
+        response_dict = {"stage" : stage, "header": "Get to work!",
+                        "button" : "Skip", "show_timer" : True, 
+                        "show_form" : False, "time": time_dict['wt']}
+    elif ((stage-2)%3==0) and (stage < (3*pom_num)):
+        # summary time 
+        response_dict = {"stage" : stage, "header": "Summarise what you just did.",
+                        "button" : "Submit", "show_timer" : True, 
+                        "show_form" : True, "time": time_dict['st']}
+    elif ((stage-3)%3==0) and (stage < (3*pom_num)):
+        # short break time
+        response_dict = {"stage" : stage, "header": "Take a short break.",
+                        "button" : "Skip", "show_timer" : True, 
+                        "show_form" : False, "time": time_dict['sbt']}
+    elif stage == (3*pom_num):
+        # long break time
+        response_dict = {"stage" : stage, "header": "Take a long break.",
+                        "button" : "Skip", "show_timer" : True, 
+                        "show_form" : False, "time": time_dict['lbt']}
+    else:
+        pass
+    return jsonify(response_dict)
 
 @app.route("/_new_pomodoro", methods=['POST'])
 def new_pomodoro():
-    return jsonify({"hello" : "there"})
+    """pom = Pomodoro(body = form.aim_body.data, session=proj.num_sessions, is_aim = True,
+                           author=current_user, project=proj, timestamp_end = datetime.utcnow())"""
+    
+    project = request.form['stage']
+    stage = int(request.form['stage'])
+    pom_num = int(request.form['pn'])
+    stage+=1
+    return get_response_json(stage, pom_num)
+
 
 @app.route("/", methods=['GET', 'POST'])
 @app.route("/login/", methods=['GET', 'POST'])
@@ -160,29 +210,11 @@ def deleteProject(title):
 
 @app.route("/project/<title>", methods=['GET', 'POST'])
 @login_required
+
 def project(title):
     proj = Project.query.filter_by(user_id=current_user.id, title=title).first()
-    form = NewPomodoroForm()
-    step_form = NextProjectStepForm()
-    if proj.current_stage > 3*proj.pom_num:
-        proj.reset_stage()
 
-    if form.validate_on_submit():
-        #proj.current_stage-=1 # weird double counting
-        #db.session.commit()
-        pom = 0
-        print (proj.current_stage)
-        if proj.current_stage == 0:
-            proj.num_sessions+=1
-            db.session.commit()
-
-            pom = Pomodoro(body = form.aim_body.data, session=proj.num_sessions, is_aim = True,
-                           author=current_user, project=proj, timestamp_end = datetime.utcnow())
-            proj.current_stage+=1
-            db.session.commit()
-            db.session.add(pom)
-            db.session.commit()
-            return redirect(url_for("project", title=title))
+    
     poms = Pomodoro.query.filter_by(project=proj) # print latest session
     current_aim =  Pomodoro.query.filter_by(project=proj,
                                             session=proj.num_sessions,
@@ -195,61 +227,12 @@ def project(title):
             most_recent = recent_first_non_blank[0]
     except Exception as err:
         print (err)
-    return render_template("project.html", step_form=step_form, form=form,
-                            project=proj, pomodoros=poms,
-                            title=title, recents = [current_aim, most_recent])
-
-def project(title):
-    proj = Project.query.filter_by(user_id=current_user.id, title=title).first()
-    form = NewPomodoroForm()
-    step_form = NextProjectStepForm()
-    if proj.current_stage > 3*proj.pom_num:
-        proj.reset_stage()
-
-    if form.validate_on_submit():
-        #proj.current_stage-=1 # weird double counting
-        #db.session.commit()
-        pom = 0
-        print (proj.current_stage)
-        if proj.current_stage == 0:
-            proj.num_sessions+=1
-            db.session.commit()
-
-            pom = Pomodoro(body = form.aim_body.data, session=proj.num_sessions, is_aim = True,
-                           author=current_user, project=proj, timestamp_end = datetime.utcnow())
-            proj.current_stage+=1
-            db.session.commit()
-            db.session.add(pom)
-            db.session.commit()
-            return redirect(url_for("project", title=title))
-        else:
-            pom = Pomodoro(body = form.pom_body.data,  session=proj.num_sessions,
-                           is_aim = False, author=current_user, project=proj)
-            proj.current_stage+=1
-            db.session.commit()
-            pom.end_time()
-            db.session.add(pom)
-            db.session.commit()
-            return redirect(url_for("project", title=title))
-    if step_form.validate_on_submit():
-        proj.current_stage+=1
-        db.session.commit()
-        return redirect(url_for("project", title=title))
-    poms = Pomodoro.query.filter_by(project=proj) # print latest session
-    current_aim =  Pomodoro.query.filter_by(project=proj,
-                                            session=proj.num_sessions,
-                                            is_aim=True).first()
-    most_recent = None
-    try:
-        recent_first = poms.order_by(desc(Pomodoro.timestamp_end)).all()
-        recent_first_non_blank = [i for i in recent_first if len(i.body)>0]
-        if len(recent_first_non_blank)>0:
-            most_recent = recent_first_non_blank[0]
-    except Exception as err:
-        print (err)
-    return render_template("project.html", step_form=step_form, form=form,
-                            project=proj, pomodoros=poms,
-                            title=title, recents = [current_aim, most_recent])
+    parameters=[proj.study_length, proj.summary_length, proj.s_break_length, 
+    proj.l_break_length, proj.pom_num, proj.cycle_num]
+    stage, pom_num = proj.current_stage, proj.pom_num
+    return render_template("project.html",
+                            project=proj, title=title, parameters=parameters,
+                            recents = [current_aim, most_recent])
 
 @app.route("/edit_project/<title>", methods=['GET', 'POST'])
 @login_required

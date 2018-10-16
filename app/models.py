@@ -45,7 +45,7 @@ class Project(db.Model):
     title = db.Column(db.String(120), index=True)
     description = db.Column(db.String(240))
     # current_stage can be: aim, study, summary, sbreak, lbreak
-    current_stage = db.Column(db.Integer, default=0)
+    current_stage = db.Column(db.Integer, default=-1)
     num_sessions = db.Column(db.Integer, default=0)
     # times indexed to enable chronological ordering
     # converted to the user's local time when displayed
