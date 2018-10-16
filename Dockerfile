@@ -4,11 +4,15 @@ RUN adduser -D pomni
 
 WORKDIR /home/pomni
 
+
 COPY requirements.txt requirements.txt
-RUN pip install virtualenv==15.1.0
-RUN python -m virtualenv venv
+RUN pip3 install virtualenv==15.1.0
+RUN python3 -m virtualenv venv
 RUN venv/bin/pip install -r requirements.txt
-RUN venv/bin/pip install gunicorn 
+RUN venv/bin/pip install gunicorn pymysql==0.7.2
+
+RUN export FLASK_ENV=development
+RUN export FLASK_DEBUG=False
 
 COPY app app
 COPY migrations migrations

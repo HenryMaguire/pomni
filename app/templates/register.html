@@ -1,19 +1,10 @@
-<!DOCTYPE html>
-<html lang='en'>
-<head>
-  <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='css/bootstrap.css') }}">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Pomni</title>
-</head>
-<body>
-  <div class="container">
-    <div class="row">
-      <div class="col-md-6">
-        <h1>POMNI</h1>
-        <a href="/home"><img src="http://via.placeholder.com/150x150"></a>
-      </div>
-    </div>
-    <h1>REGISTER</h1>
+{% extends "base.html" %}
+
+{% block page_title %}
+<h2>Registration</h2>
+{% endblock %}
+
+{% block app_content %}
     <form action="" method="post">
         {{ form.hidden_tag() }}
         <p>
@@ -46,5 +37,5 @@
         </p>
         <p>{{ form.submit() }}</p>
     </form>
-</body>
-</html>
+
+{% endblock %}

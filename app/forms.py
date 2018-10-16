@@ -30,19 +30,29 @@ class RegistrationForm(FlaskForm):
         if user is not None:
             raise ValidationError('Please use a different email address.')
 
+class ResetPasswordRequestForm(FlaskForm):
+    email = StringField('Email', validators=[DataRequired(), Email()])
+    submit = SubmitField('Request Password Reset')
+
+class ResetPasswordForm(FlaskForm):
+    password = PasswordField('Password', validators=[DataRequired()])
+    password2 = PasswordField(
+        'Repeat Password', validators=[DataRequired(), EqualTo('password')])
+    submit = SubmitField('Request Password Reset')
+
 class DeleteUserForm(FlaskForm):
-    submit = SubmitField('Please delete my account')
+    submit = SubmitField('Yes, please delete my account.')
 
 class NewProjectForm(FlaskForm):
     title = StringField('Project title', validators=[DataRequired()])
     description = StringField('Project description', default='')
-    study_length = IntegerField('Study length?', default=25)
-    summary_length = IntegerField('Summary length?', default=2)
-    s_break_length = IntegerField('Short break length?', default=3)
-    l_break_length = IntegerField('Long break length?', default=25)
+    study_length = IntegerField('Study length?', validators=[DataRequired(message="Please input how many minutes you will work for.")])
+    summary_length = IntegerField('Summary length?', validators=[DataRequired()])
+    s_break_length = IntegerField('Short break length?', validators=[DataRequired()])
+    l_break_length = IntegerField('Long break length?', validators=[DataRequired()])
 
-    pom_num = IntegerField('How many poms before long break?', default=4)
-    cycle_num = IntegerField('How many cycles?', default=2 )
+    pom_num = IntegerField('How many poms before long break?', validators=[DataRequired()])
+    cycle_num = IntegerField('How many cycles?', validators=[DataRequired()])
 
     submit = SubmitField('Create project')
 
@@ -55,12 +65,12 @@ class NewProjectForm(FlaskForm):
 class EditProjectForm(FlaskForm):
     title = StringField('Project title', validators=[DataRequired()])
     description = StringField('Project description')
-    study_length = IntegerField('Study length?')
-    summary_length = IntegerField('Summary length?')
-    s_break_length = IntegerField('Short break length?')
-    l_break_length = IntegerField('Long break length?')
+    study_length = IntegerField('Study length')
+    summary_length = IntegerField('Summary length')
+    s_break_length = IntegerField('Short break length')
+    l_break_length = IntegerField('Long break length')
 
-    pom_num = IntegerField('How many poms before long break?')
+    pom_num = IntegerField('Repetitions before long break?')
     cycle_num = IntegerField('How many cycles?')
 
     submit = SubmitField('Save changes')
@@ -76,8 +86,8 @@ class EditProjectForm(FlaskForm):
                 raise ValidationError("You've already got a project with that title!")
 
 class NextProjectStepForm(FlaskForm):
-    end_work = SubmitField('Click to complete pomodoro!')
-    end_s_break = SubmitField("Click to go again!")
+    end_work = SubmitField('Click to write a summary!')
+    end_s_break = SubmitField("Click to get to work!")
     end_l_break = SubmitField('Click for another block!')
 
 class DeleteProjectForm(FlaskForm):

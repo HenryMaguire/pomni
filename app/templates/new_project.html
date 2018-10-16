@@ -1,57 +1,65 @@
-<!DOCTYPE html>
-<html>
-<title>Pomni</title>
-<head>
-  <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='css/bootstrap.css') }}">
-</head>
-<body>
-<div class="container">
-  <div class="row">
-    <div class="col-md-6">
-      <h1>POMNI</h1>
-      <a href="/dashboard"><img src="https://image.flaticon.com/icons/svg/167/167283.svg" height="70" width="70"></a>
+{% extends "base.html" %}
+
+{% block page_title %}
+<h2>New project</h2>
+{% endblock %}
+
+{% block app_content %}
+
+
+<form action="" method="post">
+    {{ form.hidden_tag() }}
+    <p>
+
+        {{ form.title(size=32, placeholder="Project title") }}<br>
+        {% for error in form.title.errors %}
+        <span style="color: red;">[{{ error }}]</span>
+        {% endfor %}
+    </p>
+    <p>
+
+        {{ form.description(size=64, placeholder="What's this project about?") }}<br>
+    </p>
+    <div class="row">
+        <div class="col-md-3">How long can you concentrate for? </div> <div class="col-md-3">{{ form.study_length(size=3) }} minutes</div><div class="col-md-4">Research studies have shown 25 minutes to be an optimal time to work for!</div><div class="col-md-2"></div>
     </div>
-  </div>
-  <h2>New project</h2>
-  <form action="" method="post">
-      {{ form.hidden_tag() }}
-      <p>
-          {{ form.title.label }}<br>
-          {{ form.title(size=32) }}<br>
-          {% for error in form.title.errors %}
-          <span style="color: red;">[{{ error }}]</span>
-          {% endfor %}
-      </p>
-      <p>
-          {{ form.description.label }}<br>
-          {{ form.description(size=64) }}<br>
-      </p>
-      <p>
-          {{ form.study_length.label }}<br>
-          {{ form.study_length(size=32) }}<br>
-      </p>
-      <p>
-          {{ form.summary_length.label }}<br>
-          {{ form.summary_length(size=32) }}<br>
-      </p>
-      <p>
-          {{ form.s_break_length.label }}<br>
-          {{ form.s_break_length(size=32) }}<br>
-      </p>
-      <p>
-          {{ form.l_break_length.label }}<br>
-          {{ form.l_break_length(size=32) }}<br>
-      </p>
-      <p>
-          {{ form.pom_num.label }}<br>
-          {{ form.pom_num(size=32) }}<br>
-      </p>
-      <p>
-          {{ form.cycle_num.label }}<br>
-          {{ form.cycle_num(size=32) }}<br>
-      </p>
-      <p>{{ form.submit() }}</p>
-  </form>
-</div>
-</body>
-</html>
+    <br>
+      <div class="row">
+          <div class="col-md-3">How long to briefly summarise? </div> <div class="col-md-3">{{ form.summary_length(size=3) }} minutes</div><div class="col-md-4">Summarising helps you to stick to tasks and remember what you've achieved! </div><div class="col-md-2"></div>
+      </div>
+      <br>
+      <div class="row">
+          <div class="col-md-3">How long will your short breaks be? </div> <div class="col-md-3">{{ form.s_break_length(size=3) }} minutes</div><div class="col-md-4" >Having regular short breaks actually increases your long-term productivity by keeping you feeling fresh!</div><div class="col-md-2"></div>
+      </div>
+      <br>
+      <div class="row">
+        <div class="col-md-6">
+        <h4>I could do {{ form.pom_num(size=1) }} pomodoros before I need long break...</h4>
+        </div>
+        <div class="col-md-3">
+        </div>
+        <div class="col-md-3">
+        </div>
+        </div>
+
+    <div class="row">
+      <div class="col-md-4">
+        </div>
+        <div class="col-md-4">
+        <h4>... which will be {{ form.l_break_length(size=2) }} minutes long! </h4>
+        </div>
+        <div class="col-md-4">
+        </div>
+    </div>
+    <div class="row">
+      <div class="col-md-7">
+      </div>
+      <div class="col-md-5">
+        <h4 align='center'>I would like {{ form.cycle_num(size=1) }} long breaks before I'm done for the day!</h4>
+        </div>
+    </div>
+
+    <p>{{ form.submit() }}</p>
+</form>
+
+{% endblock %}

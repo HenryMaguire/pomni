@@ -1,44 +1,42 @@
-# coding-blog
-Blog written with Flask framework
+# Pomni app
+The pomni web app written in Python, Flask and a little javascript.
+
+# Quick setup
+- In terminal:
+`git clone https://github.com/HenryMaguire/pomni.git`
+
+- With Python 3 installed:
+
+`source venv/bin/activate`
+
+`venv/bin/pip install -r requirements.txt`
+
+- Set some environment variables
+
+`FLASK_APP=pomni.py`
+
+`export FLASK_ENV=development`
+
+- Make sure all the database initialisation and migration has been done with
+
+`flask db init`
+
+`flask db upgrade`
+
+- Run the application with `flask run`
+
+- View the app by typing localhost:5000 in your browser of choice.
+
+# Docker deployment
+`docker run --name pomni -d -p 8000:5000 --link mysql:dbserver -e DATABASE_URL=mysql+pymysql://pomni:pomni123@dbserver/pomni pomni:latest`
+- Create the mysql docker container for the database
+
+`docker run --name mysql -d -e MYSQL_RANDOM_ROOT_PASSWORD=yes -e MYSQL_DATABASE=pomni -e MYSQL_USER=pomni -e MYSQL_PASSWORD=<choose-password> mysql/mysql-server:5.7`
+- Build the Pomni app docker container
+
+`docker build -t pomni:latest .`
+
+- Run the Pomni docker container
 
 
-# Blog contents
-
-There will initially be two main themes:
-
-- Machine Translation
-- One word story app development: where a user writes
-stories one (or a few) words at a time with a bot
-
-Plan of posts will be:
-
-**Intro to NLP and language modelling (single post)**
-- Using Ngram conditional Probability distributions. Greedy vs. beam search.
-- Failings of Ngram method. Lack of distributed representations, no sense of
-closeness unless exact examples have been seen before.
-- RNNs and learning long-distance dependencies. LSTMs.
-- Vocabulary size contraints for Ngram vs. LSTM
-- LSTM language model code. Making predictions - greedy vs. beam search.
-- Multiple layers and the effects on fluency.
-
-**Intro to Machine-Translation**
-- Word embeddings and shared representations (post 1)
-- Encoder-Decoder architecture overview(post 1)
-- Adding complexity: (post 2)
-  - forward vs. backward encoder inputs
-  - Many layers
-  - Bidirectionality
-  - Attention mechanisms
-  - Tokenising with respect to word roots to reduce vocab
-
-**Building the one-word story app.**
-- Creating the simple word game. LSTM makes predictions on entire past sequence (inputs from user and bot).
-- Flask web application
-- Using pre-trained speech recognition model to incorporate voice-activation. Argmax over vocab words becomes input into OWS app.
-- Text to speech using a pre-trained model.
-
-**And beyond...**
-- Using images as a seed of _inspiration_ for the story bot or to generate pictorial descriptions/summaries of stories
-
-## Improvements
-- Decide on whether to make the content less Jargon-filled on the main website. 
+`docker run --name pomni -d -p 8000:5000 --link mysql:dbserver -e DATABASE_URL=mysql+pymysql://pomni:<choose-password>@dbserver/pomni pomni:latest`

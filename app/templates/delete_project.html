@@ -1,24 +1,14 @@
-<!DOCTYPE html>
-<html lang='en'>
-<title>Pomni - delete project</title>
-<head>
-  <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='css/bootstrap.css') }}">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Pomni</title>
-</head>
-<body>
-  <div class="container">
-    <div class="row">
-      <div class="col-md-6">
-        <h1>POMNI</h1>
-        <a href="/home"><img src="https://image.flaticon.com/icons/svg/167/167283.svg" height="42" width="42"></a>
-      </div>
-    </div>
-    <h1>DELETE PROJECT: {{project.title}}</h1>
+{% extends "base.html" %}
+
+{% block page_title %}
+<h3>Are you sure you would like to delete {{project.title}}?</h3>
+{% endblock %}
+
+{% block app_content %}
+
     <form action="" method="post">
         {{ form.hidden_tag() }}
         <p>{{ form.submit() }}</p>
     </form>
 
-</body>
-</html>
+{% endblock %}

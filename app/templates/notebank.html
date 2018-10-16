@@ -1,55 +1,56 @@
-<!DOCTYPE html>
-<html>
-<title>Pomni</title>
-<head>
-  <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='css/bootstrap.css') }}">
-</head>
-<body>
-<div class="container">
-  <div class="row">
-    <h1>POMNI</h1>
-  </div>
-  <div class="row">
-    <div class="col-md-2">
+{% extends "base.html" %}
 
-      <a href="/dashboard"><img src="https://image.flaticon.com/icons/svg/167/167283.svg" height="70" width="70"></a>
+{% block page_title %}
+<div class="row">
+  <div class="col-md-3">
+<h2>Notebank: {{ project.title }} </h2>
+<div class="row">
+  Started at {{ project.timestamp.strftime('%H:%M:%S') }} on {{ project.timestamp.strftime('%d/%m/%y') }}.<br>
+  Description: {{ project.description }}
+</div>
     </div>
-    <div class="col-md-2">
-      <a href="{{ url_for('project', title=project.title)}}"><img src="https://image.flaticon.com/icons/svg/1082/1082408.svg" height="70" width="70"></a>
-    </div>
+  <div class="col-md-6">
   </div>
-  <div class="row">
-    <div class="col-md-6">
-      <h3>PROJECT: {{ project.title }} </h3>
-    </div>
-  </div>
-  <div class="row">
-    <div class="col-md-6">
+  <div class="col-md-3">
+    <a href="{{ url_for('project', title=project.title)}}"><img src="https://image.flaticon.com/icons/svg/1082/1082408.svg" height="70" width="70">
+      <br><h5>Back to project</h5>
+    </a>
 
-    Created: {{ project.timestamp }} <br>
-    Description: {{ project.description }} <br>
-    </div>
   </div>
 
-  {% for i in range(project.num_sessions) %}
+</div>
 
-    <h3>Session: {{i+1}} </h3>
-    {% for pom in pomodoros.filter_by(session=i+1) %}
-    {% if pom.body|length>0 %}
-      {% if pom.is_aim %}
-        <h4>Aim:<h4>
-          {% else %}
-        <h4>Summary:<h4>
-          {% endif %}
+{% endblock %}
 
-        <h5>{{ pom.body }} </h5>
-        <h6>
-        Logged: {{ pom.timestamp_end}}
+{% block app_content %}
+
+<div class="row">
+{% for i in range(project.num_sessions) %}
+  <h3>Session: {{i+1}} </h3>
+
+  {% for pom in pomodoros.filter_by(session=i+1) %}
+  <div class="row">
+  {% if pom.body|length>0 %}
+    {% if pom.is_aim %}
+    <div class="col-md-2"><h4>Aim :<h4></div>
+      <div class="col-md-8"><h5>{{ pom.body }} </h5></div>
+      <div class="col-md-2"> </div>
+      <h6>
+      Started on {{ pom.timestamp_end.strftime('%d/%m/%y') }} at {{ pom.timestamp_end.strftime('%H:%M:%S') }}.
       </h6>
+    {% else %}
+
+      <div class="col-md-2"><h4>Summary :<h4></div>
+        <div class="col-md-8"><h5>{{ pom.body }} </h5></div>
+        <div class="col-md-2"> </div>
+        <h6>
+        Logged on {{ pom.timestamp_end.strftime('%d/%m/%y') }} at {{ pom.timestamp_end.strftime('%H:%M:%S') }}.
+        </h6>
+        {% endif %}
       {% else %}
       {% endif %}
-      {% endfor %}
-    </p>
+    </div>
     {% endfor %}
-</body>
-</html>
+  {% endfor %}
+</div>
+{% endblock %}

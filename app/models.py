@@ -1,8 +1,9 @@
 from app import db
 from datetime import datetime
 from flask_login import UserMixin
-from app import login
-
+from app import app, login
+from time import time
+import jwt
 from werkzeug.security import generate_password_hash, check_password_hash
 
 class User(UserMixin, db.Model):
@@ -24,12 +25,27 @@ class User(UserMixin, db.Model):
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
 
+    def get_reset_password_token(self, expires_in=600):
+        #
+        return jwt.encode(
+            {'reset_password': self.id, 'exp': time() + expires_in},
+            app.config['SECRET_KEY'], algorithm='HS256').decode('utf-8')
+
+    @staticmethod
+    def verify_reset_password_token(token):
+        try:
+            id = jwt.decode(token, app.config['SECRET_KEY'],
+                            algorithms=['HS256'])['reset_password']
+        except:
+            return
+        return User.query.get(id)
+
 class Project(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(120), index=True)
     description = db.Column(db.String(240))
     # current_stage can be: aim, study, summary, sbreak, lbreak
-    current_stage = db.Column(db.Integer, default=0)
+    current_stage = db.Column(db.Integer, default=-1)
     num_sessions = db.Column(db.Integer, default=0)
     # times indexed to enable chronological ordering
     # converted to the user's local time when displayed
