@@ -1,14 +1,15 @@
 {% extends "base.html" %}
 
 {% block page_title %}
-<h3>Are you sure you would like to delete {{project.title}}?</h3>
+<p class="lead">Are you sure you would like to delete <strong>"{{project.title}}"</strong>?</ps>
 {% endblock %}
 
 {% block app_content %}
 
     <form action="" method="post">
         {{ form.hidden_tag() }}
-        <p>{{ form.submit() }}</p>
+        {{ form.submit(class_="btn btn-outline-danger") }}
     </form>
+    <a class="btn btn-outline-success" href="/dashboard">No, take me home!</a>
 
 {% endblock %}

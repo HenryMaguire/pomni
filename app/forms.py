@@ -79,7 +79,7 @@ class NewProjectForm(ProjectMixin):
 
 class EditProjectForm(ProjectMixin):
     submit = SubmitField('Save changes')
-    
+
 class DeleteProjectForm(FlaskForm):
-    submit = SubmitField('Please delete this project')
+    submit = SubmitField('Yes, please delete this project')
 

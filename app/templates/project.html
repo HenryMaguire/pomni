@@ -19,10 +19,10 @@
 <div class="row">
     <div class="btn-group d-inline">
         <span data-toggle="tooltip" data-placement="right" title="Change project settings">
-            <a class="btn btn-outline-primary" href="{{ url_for('editProject', title=project.title)}}"><i class="fas fa-cogs"></i> </a>
+            <a class="btn btn-outline-secondary" href="{{ url_for('editProject', title=project.title)}}"><i class="fas fa-cogs"></i> </a>
           </span>
             <span data-toggle="tooltip" data-placement="right" title="Need some guidance?">
-              <button class="btn btn-outline-primary" data-toggle="modal" data-target="#aiModal"><i class="fas fa-user-friends"></i>
+              <button class="btn btn-outline-secondary" data-toggle="modal" data-target="#aiModal"><i class="fas fa-user-friends"></i>
               </button>
             </span>
     </div> <p class="text-muted text-right d-inline">
@@ -37,7 +37,7 @@
     
     <div class="form-group text-center">
       <label for="message"> <p id="summary_header" class="lead">Are you ready to begin?</p></label>
-      <div class="display-4 border border-success py-4 text-center rounded-circle" id="timer">00 : 00</div>
+      <div class="display-4 border border-primary py-4 text-center rounded-circle" id="timer">00 : 00</div>
       <textarea class="form-control" id="summary" rows="3" name="summary" autofocus></textarea>
     </div>
     
@@ -46,7 +46,7 @@
         <div id="progress_bar" class="progress-bar bg-secondary" style="width:{{(100*(project.current_stage)/(3*project.pom_num)) | int}}%;">{{(100*(project.current_stage)/(3*project.pom_num)) | int}}%</div>
     </div>
     <div class="text-center py-1">
-        <button class="btn btn-outline-info py-0" data-toggle="modal" data-target="#resetModal">
+        <button class="btn btn-outline-secondary py-0" data-toggle="modal" data-target="#resetModal">
       Reset </button>
     </div>
   </div>

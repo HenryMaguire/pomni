@@ -24,21 +24,29 @@
 
 <body>
 {% block navbar %}
-<div class="container-fluid fixed-top bg-light">
+<div class="fixed-top bg-light">
+  <div class="container-fluid">
   <div class="row">
-    <div class="col-md-4">
-      <a href="/dashboard"><img src="https://image.flaticon.com/icons/svg/167/167283.svg" height="70" width="70"></a><div class="d-inline-block align-bottom"><h1>POMNI</h1></div>
+      <div class="col-2 d-inline-block">
+      <a href="/dashboard"><img src="https://image.flaticon.com/icons/svg/167/167283.svg" height="70" width="70"></a><h1 class="d-inline align-bottom">Pomni</h1></div>
+      <div class="col-2"> <a href="/dashboard" role="button"><i class="py-3 fas fa-home fa-3x text-secondary"></i></a></div>
+     
+    <div class="col-3 ml-auto">
+        <a href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <i class="py-3 fas fa-bars fa-3x text-secondary"></i>
+        </a>
+        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+          <a class="dropdown-item" href="/logout">Logout <i class="fas fa-sign-out-alt"></i></a>
+          <a class="dropdown-item" href="/user_settings">Settings <i class="fas fa-cog"></i></a>
+        </div>
       </div>
-    <div class="col-md-5">
-    </div>
-    <div class="col-md-3">{% block topRightButton %}{% endblock %}
     </div>
   </div>
 </div>
 {% endblock %}
 
 {% block content %}
-    <div class="container my-2 py-2">
+    <div class="container py-1">
 
 
       {% block page_title %}{% endblock %}

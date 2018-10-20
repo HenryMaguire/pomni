@@ -3,14 +3,10 @@
 
 {% block page_title %}
 <div class="row">
-  <div class="col-md-3">
-    <h2>Dashboard</h2>
-    </div>
   <div class="col-md-6">
-  </div>
-  <div class="col-md-3">
-    <a href="/user_settings"><img src="https://image.flaticon.com/icons/svg/126/126472.svg" height="70" width="70"></a>
-  </div>
+    <h2 class="display-4 pb-4">Projects</h2>
+    </div>
+
 
 </div>
 {% endblock %}
@@ -23,22 +19,23 @@
 
   <div class="row">
     {% if has_projects %}
-    {% for proj in projects %}
+    {% for n in range(projects.all() |length) %}
     <div class="col-md-3">
-    <a href="/project/{{proj.title}}"><h3>Project {{ proj.id }}: {{ proj.title }}</h3></a>
-    <p>Description: {{ proj.description }}
+    <div class="numberCircle">{{ n+1 }}</div>
+    <h3 class="d-inline"><a href="/project/{{projects[n].title}}" class="text-info">{{ projects[n].title }}</a></h3>
+    <p class="block-with-text text-muted">{{ projects[n].description }}
     </p>
-    <p align='justify'><a href="/project/{{proj.title}}"><img src="https://image.flaticon.com/icons/svg/148/148993.svg" height="100" width="100"></a>
+    <p align='justify'><a href="/project/{{projects[n].title}}"><img src="https://image.flaticon.com/icons/svg/148/148993.svg" height="100" width="100"></a>
     </p>
 
-    <p>Last updated: {{ proj.timestamp.strftime('%H:%M') }} on {{ proj.timestamp.strftime('%d/%m/%y') }}
+    <p>Last updated: {{ projects[n].timestamp.strftime('%H:%M') }} on {{ projects[n].timestamp.strftime('%d/%m/%y') }}
     </p>
   </div>
     {% endfor %}
   </div>
   <div class="row">
     <div class="col-md-3">
-      <h3><a href="/new_project/">+ Create new project</a></h3>
+      <h3><a href="/new_project/" class='text-info'>+ Create new project</a></h3>
       </div>
     <div class="col-md-6">
     </div>

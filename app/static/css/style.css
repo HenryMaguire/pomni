@@ -2,7 +2,7 @@ body {
   margin-top: 105px; }
 
 .navbar {
-  box-shadow: 2px 2px 5px #3292a6;
+  box-shadow: 2px 2px 5px 'primary';
   opacity: 0.9;
   background: #fff; }
   .navbar .nav-item {
@@ -12,3 +12,56 @@ body {
 .timer {
   background: #3292a6;
   font-size: 1.4rem; }
+
+/* styles for '...' */
+.block-with-text {
+  /* hide text if it more than N lines  */
+  overflow: hidden;
+  /* for set '...' in absolute position */
+  position: relative;
+  /* use this value to count block height */
+  line-height: 1.2em;
+  /* max-height = line-height (1.2) * lines max number (3) */
+  max-height: 3.6em;
+  /* fix problem when last visible word doesn't adjoin right side  */
+  text-align: justify;
+  /* place for '...' */
+  margin-right: -1em;
+  padding-right: 1em; }
+
+/* create the ... */
+.block-with-text:before {
+  /* points in the end */
+  content: '...';
+  /* absolute position */
+  position: absolute;
+  /* set position to right bottom corner of block */
+  right: 0;
+  bottom: 0; }
+
+/* hide ... if we have text, which is less than or equal to max lines */
+.block-with-text:after {
+  /* points in the end */
+  content: '';
+  /* absolute position */
+  position: absolute;
+  /* set position to right bottom corner of text */
+  right: 0;
+  /* set width and height */
+  width: 1em;
+  height: 1em;
+  margin-top: 0.2em;
+  /* bg color = bg color under block */
+  background: white; }
+
+.numberCircle {
+  border-radius: 50%;
+  /* behavior: url(PIE.htc); remove if you don't care about IE8 */
+  width: 31px;
+  height: 31px;
+  padding: 3px;
+  background: #fff;
+  border: 1px solid;
+  color: 'primary';
+  text-align: center;
+  display: inline-block; }
