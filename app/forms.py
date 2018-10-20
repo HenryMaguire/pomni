@@ -43,9 +43,9 @@ class ResetPasswordForm(FlaskForm):
 class DeleteUserForm(FlaskForm):
     submit = SubmitField('Yes, please delete my account.')
 
-class NewProjectForm(FlaskForm):
+class ProjectMixin(FlaskForm):
     title = StringField('Project title', validators=[DataRequired()])
-    description = TextAreaField('Project description', default='')
+    description = TextAreaField('Project description', id="project_description")
     possible_minutes = [(str(i), str(i)) for i in list(range(1,61))]
     study_length = SelectField('studylength', validators=[DataRequired()], 
                                                 choices=possible_minutes, default=24)
@@ -62,43 +62,24 @@ class NewProjectForm(FlaskForm):
                             choices=possible_repeats, default=4)
     cycle_num = SelectField('How many blocks in each session?', validators=[DataRequired()], 
                             choices=possible_repeats, default=3)
-
-    submit = SubmitField('Create project')
-
-    def validate_title(self, title):
-
-        project = Project.query.filter_by(user_id=current_user.id, title=title.data).first()
-        if project is not None:
-            raise ValidationError("You've already got a project with that title!")
-
-class EditProjectForm(FlaskForm):
-    title = StringField('Project title', validators=[DataRequired()])
-    description = StringField('Project description')
-    study_length = IntegerField('Study length')
-    summary_length = IntegerField('Summary length')
-    s_break_length = IntegerField('Short break length')
-    l_break_length = IntegerField('Long break length')
-
-    pom_num = IntegerField('Repetitions before long break?')
-    cycle_num = IntegerField('How many cycles?')
-
-    submit = SubmitField('Save changes')
-
+    
     def __init__(self, original_title, *args, **kwargs):
-        super(EditProjectForm, self).__init__(*args, **kwargs)
+        super(ProjectMixin, self).__init__(*args, **kwargs)
         self.original_title = original_title
 
     def validate_title(self, title):
-        if title.data != self.original_title:
+        # If we are editing the project, title allowed to be same as before
+        if title.data != self.original_title: 
             project = Project.query.filter_by(title=self.title.data).first()
             if project is not None:
                 raise ValidationError("You've already got a project with that title!")
 
-class NextProjectStepForm(FlaskForm):
-    end_work = SubmitField('Click to write a summary!')
-    end_s_break = SubmitField("Click to get to work!")
-    end_l_break = SubmitField('Click for another block!')
+class NewProjectForm(ProjectMixin):
+    submit = SubmitField('Create project')
 
+class EditProjectForm(ProjectMixin):
+    submit = SubmitField('Save changes')
+    
 class DeleteProjectForm(FlaskForm):
     submit = SubmitField('Please delete this project')
 

@@ -1,8 +1,8 @@
 from flask import render_template, flash, redirect, url_for, get_flashed_messages, jsonify, request
 from app import app, db
-from app.forms import LoginForm, RegistrationForm, DeleteUserForm, NewProjectForm
+from app.forms import LoginForm, RegistrationForm, DeleteUserForm
 from app.forms import ResetPasswordRequestForm, ResetPasswordForm
-from app.forms import DeleteProjectForm, NextProjectStepForm, EditProjectForm
+from app.forms import DeleteProjectForm, NewProjectForm, EditProjectForm
 from app.email import send_password_reset_email
 from flask_login import current_user, login_user, logout_user, login_required
 from app.models import User, Project, Pomodoro
@@ -172,7 +172,7 @@ def dashboard():
 @login_required
 def newProject():
     #app.logger.error('This is a error log test')
-    form = NewProjectForm()
+    form = NewProjectForm(None)
     if form.validate_on_submit():
         # take username and query database with it
         project = Project(title=form.title.data, description=form.description.data,
