@@ -1,3 +1,7 @@
+function resetSession() {
+    var stage = -1
+    $.post('/_reset_session/'+title).done(function(response) {location.reload()});
+    }
 
 $(document).ready(() => {
     var running_timers = [] // keep track of all running timers
@@ -101,9 +105,10 @@ $(document).ready(() => {
             // allows info to be passed from python to JS without db call. Unsafe
             var current_stage = parseInt($('#stage_num').text());
             var pom_num = params[4];
+            var timestamp = Date.now(); 
             $.post('/_new_pomodoro', {
                 summary: summary_text,
-                timestamp: new Date(), 
+                timestamp: timestamp, 
                 stage: current_stage, 
                 wt: params[0], st: params[1], sbt: params[2], 
                 lbt: params[3], pn: pom_num, bn: params[5], title: title
@@ -114,11 +119,15 @@ $(document).ready(() => {
             });
         };
     // upon page load, find out which stage of session user is at from db
-    $.getJSON("/_get_response_json/"+stage.toString()+"/"+params[4].toString(), function(data) {
+    $.getJSON("/_get_response_json/"+title.toString()+"/"+stage.toString()+"/"+params[4].toString(), function(data) {
         changeTimer(data, params[4]) // crazy hack to make the initial app state correct
     });
     updateDB(params, title);
     // if user clicks the submit button at any time, stop the timer
     $('#submit_button').bind('click', function(e) {stopTimers()})
-
+    if (stage==-1) {
+        stopTimers()
+    }
+    
+    
 })

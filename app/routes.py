@@ -9,12 +9,23 @@ from app.models import User, Project, Pomodoro
 from datetime import datetime
 from sqlalchemy import desc
 
-@app.route("/_get_response_json/<stage>/<pom_num>")
-def get_response_json(stage, pom_num):
+@app.route("/_reset_session/<title>", methods=['GET','POST'])
+def reset_session(title):
+    print()
+    proj = Project.query.filter_by(user_id=current_user.id, title=title).first()
+    proj.current_stage =-1
+    db.session.add(proj)
+    db.session.commit()
+    return redirect(url_for('project', title=title))
+
+@app.route("/_get_response_json/<title>/<stage>/<pom_num>", methods=['GET','POST'])
+def get_response_json(stage, pom_num, title):
     stage, pom_num = int(stage), int(pom_num)
     time_dict = request.form
     if len(request.form)==0:
-        time_dict = {'lbt':"0", 'st':"0", 'wt':"0",'sbt':"0"}
+        proj = Project.query.filter_by(user_id=current_user.id, title=title).first()
+        time_dict = {'lbt' : str(proj.l_break_length), 'st' : str(proj.summary_length), 
+                    'wt' : str(proj.study_length), 'sbt' : str(proj.s_break_length)}
         
     response_dict = {"stage" : stage, "header": "What are your aims for this session?",
                         "button" : "Submit", "show_timer" : True, 
@@ -22,9 +33,14 @@ def get_response_json(stage, pom_num):
     if (stage==-1) or stage >(3*pom_num):
         # let's begin
         stage = -1
+        proj = Project.query.filter_by(user_id=current_user.id, title=title).first()
+        proj.current_stage =-1
+        db.session.add(proj)
+        db.session.commit()
+        print("SOMETHING IS GOING WRONG")
         response_dict.update({"header": "Are you ready to begin?",
                         "button" : "Begin", "show_form" : False, 
-                        "time": time_dict['lbt']})
+                        "time": str(0), "show_timer": False})
     elif ((stage==0) and (stage < (3*pom_num))):
         # Aim time 
         response_dict = response_dict # defaults are for aim
@@ -45,19 +61,32 @@ def get_response_json(stage, pom_num):
                         "button" : "Skip", "show_form" : False, 
                         "time": time_dict['lbt']})
     else:
+        print ("WE'RE HERE")
         pass # this should never be the case.
     return jsonify(response_dict)
 
+from dateutil.tz import gettz
 @app.route("/_new_pomodoro", methods=['POST'])
 def new_pomodoro():
-    """pom = Pomodoro(body = form.aim_body.data, session=proj.num_sessions, is_aim = True,
-                           author=current_user, project=proj, timestamp_end = datetime.utcnow())"""
-    print( request.form)
-    project = request.form['stage']
-    stage = int(request.form['stage'])
-    pom_num = int(request.form['pn'])
-    stage+=1
-    return get_response_json(stage, pom_num)
+    rf = request.form
+    body = rf['summary']
+    
+    timestamp = datetime.now()
+    project_title = rf['title']
+    stage = int(rf['stage'])
+    pom_num = int(rf['pn'])
+    is_aim = False
+    if stage == 0 :
+        is_aim = True
+    proj = Project.query.filter_by(user_id=current_user.id, title=project_title).first()
+    pom = Pomodoro(body = body, session=proj.num_sessions, is_aim = is_aim,
+                           author=current_user, project=proj, timestamp_end = timestamp)
+    db.session.add(pom)
+    proj.current_stage +=1
+    db.session.add(proj)
+    db.session.commit()
+    
+    return get_response_json(proj.current_stage, pom_num, proj.title)
 
 
 @app.route("/", methods=['GET', 'POST'])
@@ -94,7 +123,6 @@ def register():
         user.set_password(form.password.data)
         db.session.add(user)
         db.session.commit()
-        print('Congratulations, you are now registered!')
         flash('Congratulations, you are now registered!')
         return redirect(url_for('login'))
     return render_template('register.html', title='Register', form=form)
@@ -208,9 +236,6 @@ def deleteProject(title):
 @login_required
 def project(title):
     proj = Project.query.filter_by(user_id=current_user.id, title=title).first()
-
-    
-    
     poms = Pomodoro.query.filter_by(project=proj) # print latest session
     current_aim =  Pomodoro.query.filter_by(project=proj,
                                             session=proj.num_sessions,

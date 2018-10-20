@@ -71,7 +71,7 @@ class Project(db.Model):
         self.current_stage +=1
         db.session.commit()
     def reset_stage(self):
-        self.current_stage = 0
+        self.current_stage = -1
         db.session.commit()
 
 class Pomodoro(db.Model):

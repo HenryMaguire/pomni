@@ -1,11 +1,11 @@
 {% extends "base.html" %}
 
 {% block app_content %}
+<script src="{{ url_for('static', filename='js/timer.min.js') }}"></script>
 <script>
     var stage = {{ project.current_stage }};
     var params = {{ parameters }};
     var title = "{{project.title}}";
-    var init_response = "{{response_json}}";
 </script>
 <div class="row">
 <span id="stage_num" class="d-none">{{ project.current_stage }}</span>
@@ -26,7 +26,7 @@
               </button>
             </span>
     </div> <p class="text-muted text-right d-inline">
-      - Started: {{ project.timestamp.strftime('%H:%M:%S') }} on {{ project.timestamp.strftime('%d/%m/%y') }}.
+      <!-- - Started: {{ project.timestamp.strftime('%H:%M:%S') }} on {{ project.timestamp.strftime('%d/%m/%y') }}. --> 
     </p>
 </div>  
 
@@ -50,12 +50,9 @@
       Reset </button>
     </div>
   </div>
-</div>
-
 
 <!-- PREVIOUS ACTIVITY  -->
-<div class="row">
-  <div class="col-md-6 border-top my-3">
+  <div class="col-md-4 offset-md-3 border-top my-4">
     <div class="row my-3">
       <div class="col-md-6">
         <p class="lead">Current aim:</p>
@@ -75,7 +72,7 @@
       </div>
     </div>
 </div>
-</div>
+
 <!-- MODALS -->
 
 <!-- MODAL AI ASSISTANT-->
@@ -96,6 +93,9 @@
     </div>
   </div>
 
+<script>
+
+</script>
 <!-- MODAL SESSION RESET -->
 <div class="modal" id="resetModal">
     <div class="modal-dialog">
@@ -112,7 +112,7 @@
         </div>
         <div class="modal-footer">
           <button class="btn btn-secondary mr-auto" data-dismiss="modal">Close</button>
-          <button class="btn btn-danger" data-dismiss="modal">Reset</button>
+          <button onclick="resetSession()" class="btn btn-danger" data-dismiss="modal">Reset</button>
           
         </div>
       </div>
@@ -125,5 +125,5 @@
 
 {% block footer %}
 
-<script src="{{ url_for('static', filename='js/timer.min.js') }}"></script>
+
 {% endblock %}
