@@ -21,11 +21,11 @@
         {{ form.description(size=64, placeholder="What's this project about?", class_="form-control") }}<br>
     </p>
     <div class="row">
-        <div class="col-md-3">How long can you concentrate for? </div> <div class="col-md-3">{{ form.study_length }} minutes</div><div class="col-md-4 text-muted">Research has shown 25 minutes to be an optimal time to work for!</div><div class="col-md-2"></div>
+        <div class="col-md-3">How long can you concentrate for? </div> <div class="col-md-3">{{ form.study_length}} minutes</div><div class="col-md-4 text-muted">Research has shown 25 minutes to be an optimal time to work for!</div><div class="col-md-2"></div>
     </div>
     <br>
       <div class="row">
-          <div class="col-md-3">How long to briefly summarise? </div> <div class="col-md-3">{{ form.summary_length }} minutes</div><div class="col-md-4 text-muted">Summarising helps you to stick to tasks and remember what you've achieved! </div><div class="col-md-2"></div>
+          <div class="col-md-3">How long to briefly summarise? </div> <div class="col-md-3">{{ form.summary_length}} minutes</div><div class="col-md-4 text-muted">Summarising helps you to stick to tasks and remember what you've achieved! </div><div class="col-md-2"></div>
       </div>
       <br>
       <div class="row">
@@ -34,28 +34,23 @@
       <br>
       <div class="row">
         <div class="col-md-6">
-        <h4>I could do {{ form.pom_num }} pomodoros before I need long break...</h4>
+        <p class="lead">"I could do {{ form.pom_num }} pomodoros before I need long break...</h4>
         </div>
-        <div class="col-md-3">
-        </div>
-        <div class="col-md-3">
+        <div class="col-md-6">
+                
         </div>
         </div>
 
     <div class="row">
-      <div class="col-md-4">
-        </div>
-        <div class="col-md-4">
-        <h4>... which will be {{ form.l_break_length }} minutes long! </h4>
-        </div>
-        <div class="col-md-4">
+        <div class="col-md-4 offset-md-4">
+         <p class="lead">... which will be {{ form.l_break_length(class_="p") }} minutes long! </p>
         </div>
     </div>
     <div class="row">
-      <div class="col-md-7">
-      </div>
-      <div class="col-md-5">
-        <h4 align='center'>I would like {{ form.cycle_num }} long breaks before I'm done for the day!</h4>
+      <div class="col-md-5 offset-md-7">
+        <p class="lead text-center">
+            I would like {{ form.cycle_num}} long breaks before I'm done for the day!"
+        </p>
         </div>
     </div>
 

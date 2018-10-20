@@ -16,42 +16,36 @@ def get_response_json(stage, pom_num):
     if len(request.form)==0:
         time_dict = {'lbt':"0", 'st':"0", 'wt':"0",'sbt':"0"}
         
-    response_dict = {}
+    response_dict = {"stage" : stage, "header": "What are your aims for this session?",
+                        "button" : "Submit", "show_timer" : True, 
+                        "show_form" : True, "time": time_dict['st']}
     if (stage==-1) or stage >(3*pom_num):
         # let's begin
         stage = -1
-        response_dict = {"stage" : stage, "header": "Are you ready to begin?",
-                        "button" : "Begin", "show_timer" : True, 
-                        "show_form" : False, "time": time_dict['lbt']}
+        response_dict.update({"header": "Are you ready to begin?",
+                        "button" : "Begin", "show_form" : False, 
+                        "time": time_dict['lbt']})
     elif ((stage==0) and (stage < (3*pom_num))):
         # Aim time 
-        response_dict = {"stage" : stage, "header": "What are your aims for this session?",
-                        "button" : "Submit", "show_timer" : True, 
-                        "show_form" : True, "time": time_dict['st']}
+        response_dict = response_dict # defaults are for aim
     elif (((stage-1)%3==0) and (stage < (3*pom_num))):
         # work time
-        response_dict = {"stage" : stage, "header": "Get to work!",
-                        "button" : "Skip", "show_timer" : True, 
-                        "show_form" : False, "time": time_dict['wt']}
+        response_dict.update({"header": "Get to work!", "button" : "Skip", 
+                            "show_form" : False, "time": time_dict['wt']})
     elif ((stage-2)%3==0) and (stage < (3*pom_num)):
         # summary time 
-        response_dict = {"stage" : stage, "header": "Summarise what you just did.",
-                        "button" : "Submit", "show_timer" : True, 
-                        "show_form" : True, "time": time_dict['st']}
+        response_dict.update({"header": "Summarise what you just did.", "time": time_dict['st']})
     elif ((stage-3)%3==0) and (stage < (3*pom_num)):
         # short break time
-        response_dict = {"stage" : stage, "header": "Take a short break.",
-                        "button" : "Skip", "show_timer" : True, 
-                        "show_form" : False, "time": time_dict['sbt']}
+        response_dict.update({"header": "Take a short break.",
+                        "button" : "Skip", "show_form" : False, "time": time_dict['sbt']})
     elif stage == (3*pom_num):
         # long break time
-        response_dict = {"stage" : stage, "header": "Take a long break.",
-                        "button" : "Skip", "show_timer" : True, 
-                        "show_form" : False, "time": time_dict['lbt']}
+        response_dict.update({"header": "Take a long break.",
+                        "button" : "Skip", "show_form" : False, 
+                        "time": time_dict['lbt']})
     else:
-        # this should never be activated
-        print ("Uh oh!")
-        pass
+        pass # this should never be the case.
     return jsonify(response_dict)
 
 @app.route("/_new_pomodoro", methods=['POST'])
