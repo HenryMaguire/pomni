@@ -17,11 +17,11 @@ def get_response_json(stage, pom_num):
         time_dict = {'lbt':"0", 'st':"0", 'wt':"0",'sbt':"0"}
         
     response_dict = {}
-    print (stage)
-    if stage==-1:
+    if (stage==-1) or stage >(3*pom_num):
         # let's begin
+        stage = -1
         response_dict = {"stage" : stage, "header": "Are you ready to begin?",
-                        "button" : "Begin", "show_timer" : False, 
+                        "button" : "Begin", "show_timer" : True, 
                         "show_form" : False, "time": time_dict['lbt']}
     elif ((stage==0) and (stage < (3*pom_num))):
         # Aim time 
@@ -49,6 +49,8 @@ def get_response_json(stage, pom_num):
                         "button" : "Skip", "show_timer" : True, 
                         "show_form" : False, "time": time_dict['lbt']}
     else:
+        # this should never be activated
+        print ("Uh oh!")
         pass
     return jsonify(response_dict)
 

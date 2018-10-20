@@ -1,6 +1,6 @@
 
 $(document).ready(() => {
-    
+    var running_timers = [] // keep track of all running timers
     function displaySeconds(timer) {
         // takes in seconds and returns a string
         minutes = parseInt(timer / 60, 10)
@@ -11,19 +11,21 @@ $(document).ready(() => {
         seconds = seconds < 10 ? "0" + seconds : seconds;
         return minutes + " : " + seconds;
         }
-    var refr = 0; // we define the refresh out of scope to we can stop when user skips the timer
+
+    var refr = 0; // define the refresh out of startTimer scope to user can stop it
+
     function showAlert() {
         alert("Time's Up!");
        }
+
     function startTimer(duration) {
       duration = duration*60
-      var timer = duration, minutes, seconds;
+      var timer = duration-1;
       var refresh = setInterval(function () { // refresh every second
           refr = refresh;
           var output = displaySeconds(timer);
-          document.getElementById("timer").innerHTML = output //minutes + "m " + seconds + "s ";
+          $("#timer").text(output) //minutes + "m " + seconds + "s ";
           $("title").html(output + " - Pomni");
-          
           if (--timer < 0) {
             clearInterval(refresh);  // exit refresh loop
             var music = $("#over_music")[0];
@@ -33,26 +35,36 @@ $(document).ready(() => {
             
           };
       }, 1000);
-}
+      running_timers.push(refresh)
+    }
+    function stopTimers(){
+        // multiple timers are running, submit button needs to stop all of them
+        for (var i=0; i < running_timers.length; i++) {
+            clearInterval(running_timers[i])
+        }
+        running_timers = []; // Now there are no running timers
+    }
     function changeTimer(response, pn) {
-        // given `stage` we need to update the db with the changes, receive any info we need to update the page with new timer        
+        // given `stage` we need to update the db with the changes, receive any info we need to update the page with new timer     
+        var pb = $('#progress_bar')
+        var time;
         $('#stage_num').text(response['stage']);
         $('#summary_header').text(response['header']);
         $('#submit_button').text(response['button']);
-        $('#summary_header').text(response['header']);
         $('#timer').text(displaySeconds(60*parseInt(response['time'])));
         var progress_percentage = Math.round(100*(parseFloat(response['stage']))/(3*parseFloat(pn)));
-        $('#progress_bar').css('width', progress_percentage.toString()+"%");
-        $('#progress_bar').text(progress_percentage)
+        pb.css('width', progress_percentage.toString()+"%");
+        pb.text(progress_percentage)
         if (progress_percentage==100) {
-            $('#progress_bar').addClass("bg-success")
-            $('#progress_bar').removeClass("bg-secondary")
+            pb.addClass("bg-success")
+            pb.removeClass("bg-secondary")
         }
         else {
-            $('#progress_bar').addClass("bg-secondary")
-            $('#progress_bar').removeClass("bg-success")
+            pb.addClass("bg-secondary")
+            pb.removeClass("bg-success")
         }
-        if (parseInt(response['stage'])>0){
+        if (parseInt(response['stage'])>=0){
+            // BEGIN TIMER (if the user is ready)!
             startTimer(parseInt(response['time']));
         }
         
@@ -61,14 +73,14 @@ $(document).ready(() => {
         //}
         //else {
         //    $("#timer").addClass("d-none")
+        // or // .removeClass("d-none")
         //}
-        //if (response['show_form']) {
-        //    $("#summary").removeClass("d-none")
-        //}
-        //else {
-        //    $("#summary").addClass("d-none")
-        //}
-        
+        if (response['show_form']) {
+            $("#summary").css("visibility","visible")}
+        else {
+            $("#summary").css("visibility","hidden")}
+
+        $("#summary").focus(); // html autofocus doesn't work with hidden
     };
         
 
@@ -92,11 +104,12 @@ $(document).ready(() => {
                 });
             });
         };
+    // upon page load, find out which stage of session user is at from db
     $.getJSON("/_get_response_json/"+stage.toString()+"/"+params[4].toString(), function(data) {
         changeTimer(data, params[4]) // crazy hack to make the initial app state correct
     });
-    var refr = updateDB(stage, params, title);
+    updateDB(stage, params, title);
     // if user clicks the submit button at any time, stop the timer
-    $('#submit_button').bind('click', function(e) {clearInterval(refr)})
+    $('#submit_button').bind('click', function(e) {stopTimers()})
 
 })
