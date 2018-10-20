@@ -47,7 +47,7 @@ $(document).ready(() => {
     function changeTimer(response, pn) {
         // given `stage` we need to update the db with the changes, receive any info we need to update the page with new timer     
         var pb = $('#progress_bar')
-        var time;
+        var summary_form = $("#summary")
         $('#stage_num').text(response['stage']);
         $('#summary_header').text(response['header']);
         $('#submit_button').text(response['button']);
@@ -67,48 +67,57 @@ $(document).ready(() => {
             // BEGIN TIMER (if the user is ready)!
             startTimer(parseInt(response['time']));
         }
-        
-        //if (response['show_timer']) {
-        //    $("#timer").css("visibility","hidden")
-        //}
-        //else {
-        //    $("#timer").addClass("d-none")
-        // or // .removeClass("d-none")
-        //}
-        if (response['show_form']) {
-            $("#summary").css("visibility","visible")}
-        else {
-            $("#summary").css("visibility","hidden")}
 
-        $("#summary").focus(); // html autofocus doesn't work with hidden
+        if (response['show_form']) {
+            summary_form.css("visibility","visible")}
+        else {
+            summary_form.css("visibility","hidden")}
+
+            summary_form.focus(); // html autofocus doesn't work with hidden
     };
         
 
-    function updateDB(stage, params, title) {
+    function updateDB(params, title) {
         // on click of submit button, take form and send it to the db
         // we definitely need the end timestamp and the stage 
-        // `stage` must be incremented serverside, so that if the user exits, we know which stage they are actually on.
+        // `stage` must be incremented serverside, so that if the user exits, we know which stage they are actually on. Also stops people having post access to db via JS script
         // params : [worktime, summarytime, resttime, numpoms, numblocks]
-        $('#submit_button').bind('click', function(e) {
-        e.preventDefault();
-        var summary_text = document.getElementById("summary").value;
-        $.post('/_new_pomodoro', {
-            summary: summary_text,
-            timestamp: new Date(),
-            stage: parseInt($('#stage_num').text()),
-            wt: params[0], st: params[1], sbt: params[2], lbt: params[3], pn: params[4], bn: params[5],
-            title: title
-            }).done(function(response) {changeTimer(response, params[4])}
-            ).fail(function() {
-                $('#summary_header').text("Error: Could not contact server.");
-                });
+        var submit_button =  $("#submit_button");
+        var summary_form = $("#summary")
+
+        // When enter key is pressed, press submit button. 
+        $(document).keyup(function(event) {
+            if (event.keyCode === 13) {
+                // make it harder for user to skip timers with no return key
+                if (submit_button.text() != "Skip"){
+                    submit_button.click();
+                }
+            }
+        });
+        submit_button.bind('click', function(e) {
+            e.preventDefault();
+            var summary_text = summary_form.val();
+            // Naughty hack below: get stage secretly via HTML page
+            // allows info to be passed from python to JS without db call. Unsafe
+            var current_stage = parseInt($('#stage_num').text());
+            var pom_num = params[4];
+            $.post('/_new_pomodoro', {
+                summary: summary_text,
+                timestamp: new Date(), 
+                stage: current_stage, 
+                wt: params[0], st: params[1], sbt: params[2], 
+                lbt: params[3], pn: pom_num, bn: params[5], title: title
+                }).done(function(response) {changeTimer(response, pom_num)}
+                ).fail(function() {
+                    $('#summary_header').text("Error: Could not contact server.");
+                    });
             });
         };
     // upon page load, find out which stage of session user is at from db
     $.getJSON("/_get_response_json/"+stage.toString()+"/"+params[4].toString(), function(data) {
         changeTimer(data, params[4]) // crazy hack to make the initial app state correct
     });
-    updateDB(stage, params, title);
+    updateDB(params, title);
     // if user clicks the submit button at any time, stop the timer
     $('#submit_button').bind('click', function(e) {stopTimers()})
 

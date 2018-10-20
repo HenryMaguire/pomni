@@ -58,7 +58,7 @@ def get_response_json(stage, pom_num):
 def new_pomodoro():
     """pom = Pomodoro(body = form.aim_body.data, session=proj.num_sessions, is_aim = True,
                            author=current_user, project=proj, timestamp_end = datetime.utcnow())"""
-    
+    print( request.form)
     project = request.form['stage']
     stage = int(request.form['stage'])
     pom_num = int(request.form['pn'])
