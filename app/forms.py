@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import DecimalField, IntegerField, StringField, PasswordField, BooleanField, SubmitField
+from wtforms import DecimalField, IntegerField, StringField, PasswordField, BooleanField, SubmitField, SelectField, TextAreaField
 from wtforms.validators import ValidationError, DataRequired, Email, EqualTo
 from flask_login import current_user
 from app.models import User, Project
@@ -45,14 +45,23 @@ class DeleteUserForm(FlaskForm):
 
 class NewProjectForm(FlaskForm):
     title = StringField('Project title', validators=[DataRequired()])
-    description = StringField('Project description', default='')
-    study_length = IntegerField('Study length?', validators=[DataRequired(message="Please input how many minutes you will work for.")])
-    summary_length = IntegerField('Summary length?', validators=[DataRequired()])
-    s_break_length = IntegerField('Short break length?', validators=[DataRequired()])
-    l_break_length = IntegerField('Long break length?', validators=[DataRequired()])
+    description = TextAreaField('Project description', default='')
+    possible_minutes = [(str(i), str(i)) for i in list(range(1,61))]
+    study_length = SelectField('studylength', validators=[DataRequired()], 
+                                                choices=possible_minutes, default=24)
+    summary_length = SelectField('summarylength', validators=[DataRequired()], 
+                                                choices=possible_minutes, default=2)
+    s_break_length = SelectField('Short break length?', validators=[DataRequired()], 
+                                                        choices=possible_minutes, default=4)
+    l_break_length = SelectField('Long break length?', validators=[DataRequired()],
+                                                        choices=possible_minutes, default=20)
 
-    pom_num = IntegerField('How many poms before long break?', validators=[DataRequired()])
-    cycle_num = IntegerField('How many cycles?', validators=[DataRequired()])
+    possible_repeats = [(str(i), str(i)) for i in list(range(1,15))]
+    pom_num = SelectField('How many pomodoros in each block?', 
+                            validators=[DataRequired()], 
+                            choices=possible_repeats, default=4)
+    cycle_num = SelectField('How many blocks in each session?', validators=[DataRequired()], 
+                            choices=possible_repeats, default=3)
 
     submit = SubmitField('Create project')
 
@@ -93,8 +102,3 @@ class NextProjectStepForm(FlaskForm):
 class DeleteProjectForm(FlaskForm):
     submit = SubmitField('Please delete this project')
 
-class NewPomodoroForm(FlaskForm):
-    aim_body = StringField('What are your aims for this session?')
-    pom_body = StringField('What did you cover in this pomodoro?')
-
-    submit = SubmitField('Enter')

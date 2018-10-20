@@ -2,7 +2,7 @@ from flask import render_template, flash, redirect, url_for, get_flashed_message
 from app import app, db
 from app.forms import LoginForm, RegistrationForm, DeleteUserForm, NewProjectForm
 from app.forms import ResetPasswordRequestForm, ResetPasswordForm
-from app.forms import DeleteProjectForm, NewPomodoroForm, NextProjectStepForm, EditProjectForm
+from app.forms import DeleteProjectForm, NextProjectStepForm, EditProjectForm
 from app.email import send_password_reset_email
 from flask_login import current_user, login_user, logout_user, login_required
 from app.models import User, Project, Pomodoro
@@ -212,10 +212,10 @@ def deleteProject(title):
 
 @app.route("/project/<title>", methods=['GET', 'POST'])
 @login_required
-
 def project(title):
     proj = Project.query.filter_by(user_id=current_user.id, title=title).first()
 
+    
     
     poms = Pomodoro.query.filter_by(project=proj) # print latest session
     current_aim =  Pomodoro.query.filter_by(project=proj,
@@ -229,6 +229,7 @@ def project(title):
             most_recent = recent_first_non_blank[0]
     except Exception as err:
         print (err)
+    
     parameters=[proj.study_length, proj.summary_length, proj.s_break_length, 
     proj.l_break_length, proj.pom_num, proj.cycle_num]
     stage, pom_num = proj.current_stage, proj.pom_num

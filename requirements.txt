@@ -3,7 +3,7 @@ flask-mail==0.9.1
 Flask-SQLAlchemy==2.3.2
 Flask-WTF==0.14.2
 Frozen-Flask==0.15
-Flask-Login
+Flask-Login==0.4.1
 Flask-Migrate==2.2.1
 pyjwt==1.6.4
 SQLAlchemy==1.2.10

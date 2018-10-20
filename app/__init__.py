@@ -17,7 +17,8 @@ app = Flask(__name__)
 app.config.from_object(Config)
 
 mail = Mail(app)
-login = LoginManager(app)
+login = LoginManager()
+login.init_app(app)
 login.login_view = 'login' #
 
 db = SQLAlchemy(app)
