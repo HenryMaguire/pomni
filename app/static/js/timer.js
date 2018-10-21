@@ -7,7 +7,33 @@ function resetSession() {
     var stage = -1
     $.post('/_reset_session/'+title).done(function(response) {location.reload()});
     }
+
+
+function countRemainingCharacters() {
+    summary_form = $("#summary")
+    var summary_length = summary_form.val().length;
+    var max_length = parseInt(summary_form.attr('max_length'));
+    var diff = max_length-summary_length
+    $("#char_count").text(diff + " characters remaining");
+    if (diff <0) {
+        console.log(diff)
+        $("#char_count").addClass("text-danger")
+        $("#char_count").removeClass("text-muted")
+        $('#submit_button').prop('disabled', true)
+    }
+    else {
+        $("#char_count").removeClass("text-danger")
+        $("#char_count").addClass("text-muted")
+        $('#submit_button').prop('disabled', false)
+    }
+        
+    // if summary_length > max_length add danger class to thing
+    // also turn off the submit button
+    // change name of attribute to maxLength
+}
 $(document).ready(() => {
+    
+
     
 
     var running_timers = [] // keep track of all running timers
@@ -81,14 +107,26 @@ $(document).ready(() => {
         }
         if (! response['show_timer']) {
             stopTimers()}
+
         if (response['show_form']) {
+            console.log("YESSSSSS")
+            $("#char_count").removeClass("text-danger")
+            $("#char_count").css("visibility","visible")
             summary_form.css("visibility","visible")
             summary_form.val("")
+            // hide character count too
+            
         }
             
         else {
+            var max_length = parseInt(summary_form.attr('maxlength'));
+            $("#char_count").css("visibility","hidden")
+            $("#char_count").text(max_length + " characters remaining");
+            
             summary_form.css("visibility","hidden")}
+            
             summary_form.focus(); // html autofocus doesn't work with hidden
+            
     };
         
 

@@ -238,7 +238,7 @@ def deleteProject(title):
 
 def get_recent_activity(title):
     proj = Project.query.filter_by(user_id=current_user.id, title=title).first()
-    poms = Pomodoro.query.filter_by(project=proj) # print latest session
+    poms = Pomodoro.query.filter_by(project=proj, is_aim=False) # print latest session
     current_aim =  Pomodoro.query.filter_by(project=proj,
                                             session=proj.num_sessions,
                                             is_aim=True).first()
@@ -265,12 +265,13 @@ def get_recent_activity(title):
 @app.route("/project/<title>", methods=['GET', 'POST'])
 @login_required
 def project(title):
+    max_summary_length = 440
     proj = Project.query.filter_by(user_id=current_user.id, title=title).first()
     parameters=[proj.study_length, proj.summary_length, proj.s_break_length, 
     proj.l_break_length, proj.pom_num, proj.cycle_num]
     stage, pom_num = proj.current_stage, proj.pom_num
-    return render_template("project.html",
-                            project=proj, title=title, parameters=parameters)
+    return render_template("project.html", project=proj, title=title, 
+                            parameters=parameters, max_length=max_summary_length)
 
 @app.route("/edit_project/<title>", methods=['GET', 'POST'])
 @login_required

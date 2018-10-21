@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
 from wtforms import DecimalField, IntegerField, StringField, PasswordField, BooleanField, SubmitField, SelectField, TextAreaField
-from wtforms.validators import ValidationError, DataRequired, Email, EqualTo
+from wtforms.validators import ValidationError, DataRequired, Email, EqualTo, Length
 from flask_login import current_user
 from app.models import User, Project
 
@@ -44,8 +44,8 @@ class DeleteUserForm(FlaskForm):
     submit = SubmitField('Yes, please delete my account.')
 
 class ProjectMixin(FlaskForm):
-    title = StringField('Project title', validators=[DataRequired()])
-    description = TextAreaField('Project description', id="project_description")
+    title = StringField('Project title', validators=[DataRequired(), Length(min=-1, max=60)])
+    description = TextAreaField('Project description', id="project_description", validators=[Length(max=240)])
     possible_minutes = [(str(i), str(i)) for i in list(range(1,61))]
     study_length = SelectField('studylength', validators=[DataRequired()], 
                                                 choices=possible_minutes, default=24)

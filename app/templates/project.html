@@ -38,9 +38,9 @@
     <div class="form-group text-center">
       <label for="message"> <p id="summary_header" class="lead">Are you ready to begin?</p></label>
       <div class="display-4 border border-primary py-4 text-center rounded-circle" id="timer">00 : 00</div>
-      <textarea class="form-control" id="summary" rows="3" name="summary" autofocus></textarea>
+      <textarea class="form-control" id="summary" rows="3" name="summary" max_length="{{max_length}}" onKeyup="countRemainingCharacters()" autofocus></textarea>
     </div>
-    
+    <div class="row my-0"> <p class="text-right text-muted" id="char_count">{{max_length}} characters remaining</p></div>
     <button class="btn btn-secondary btn-block" id="submit_button" type="button">Submit</button>
     <div class="progress my-2" >
         <div id="progress_bar" class="progress-bar bg-secondary" style="width:{{(100*(project.current_stage)/(3*project.pom_num)) | int}}%;">{{(100*(project.current_stage)/(3*project.pom_num)) | int}}%</div>
@@ -52,7 +52,7 @@
   </div>
 
 <!-- PREVIOUS ACTIVITY  -->
-  <div class="col-md-4 offset-md-3 border-top my-4">
+  <div class="col-md-6 offset-md-2 border-top my-4">
     <div class="row my-3">
       <div class="col-md-6">
         <p class="lead">Current aim:</p>
@@ -118,11 +118,6 @@
     </div>
   </div>
   
-
-
-{% endblock %}
-
-{% block footer %}
 
 
 {% endblock %}
