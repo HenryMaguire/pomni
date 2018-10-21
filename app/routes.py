@@ -22,22 +22,25 @@ def reset_session(title):
 def get_response_json(stage, pom_num, title):
     stage, pom_num = int(stage), int(pom_num)
     time_dict = request.form
+    current_aim, last_summary = get_recent_activity(title)
+    
     if len(request.form)==0:
         proj = Project.query.filter_by(user_id=current_user.id, title=title).first()
         time_dict = {'lbt' : str(proj.l_break_length), 'st' : str(proj.summary_length), 
                     'wt' : str(proj.study_length), 'sbt' : str(proj.s_break_length)}
-        
+    
     response_dict = {"stage" : stage, "header": "What are your aims for this session?",
                         "button" : "Submit", "show_timer" : True, 
-                        "show_form" : True, "time": time_dict['st']}
+                        "show_form" : True, "time": time_dict['st'], 
+                        "current_aim" : current_aim, "last_summary": last_summary}
     if (stage==-1) or stage >(3*pom_num):
         # let's begin
         stage = -1
         proj = Project.query.filter_by(user_id=current_user.id, title=title).first()
         proj.current_stage =-1
+        proj.num_sessions+=1
         db.session.add(proj)
         db.session.commit()
-        print("SOMETHING IS GOING WRONG")
         response_dict.update({"header": "Are you ready to begin?",
                         "button" : "Begin", "show_form" : False, 
                         "time": str(0), "show_timer": False})
@@ -57,7 +60,7 @@ def get_response_json(stage, pom_num, title):
                         "button" : "Skip", "show_form" : False, "time": time_dict['sbt']})
     elif stage == (3*pom_num):
         # long break time
-        response_dict.update({"header": "Take a long break.",
+        response_dict.update({"header": "Good job! Take a long break.",
                         "button" : "Skip", "show_form" : False, 
                         "time": time_dict['lbt']})
     else:
@@ -69,7 +72,7 @@ from dateutil.tz import gettz
 @app.route("/_new_pomodoro", methods=['POST'])
 def new_pomodoro():
     rf = request.form
-    body = rf['summary']
+    body = rf['summary'].rstrip() # Remove trailing newline
     
     timestamp = datetime.now()
     project_title = rf['title']
@@ -78,6 +81,7 @@ def new_pomodoro():
     is_aim = False
     if stage == 0 :
         is_aim = True
+    print("UPDATING DB")
     proj = Project.query.filter_by(user_id=current_user.id, title=project_title).first()
     pom = Pomodoro(body = body, session=proj.num_sessions, is_aim = is_aim,
                            author=current_user, project=proj, timestamp_end = timestamp)
@@ -232,29 +236,41 @@ def deleteProject(title):
     return render_template('delete_project.html', title='Delete project',
                             form=form, project=p)
 
-@app.route("/project/<title>", methods=['GET', 'POST'])
-@login_required
-def project(title):
+def get_recent_activity(title):
     proj = Project.query.filter_by(user_id=current_user.id, title=title).first()
     poms = Pomodoro.query.filter_by(project=proj) # print latest session
     current_aim =  Pomodoro.query.filter_by(project=proj,
                                             session=proj.num_sessions,
                                             is_aim=True).first()
-    most_recent = None
+    most_recent_body = ""
+    current_aim_body = ""
     try:
         recent_first = poms.order_by(desc(Pomodoro.timestamp_end)).all()
         recent_first_non_blank = [i for i in recent_first if len(i.body)>0]
         if len(recent_first_non_blank)>0:
             most_recent = recent_first_non_blank[0]
+        try:
+            current_aim_body = current_aim.body
+        except:
+            pass
+        try:
+            most_recent_body = most_recent.body
+        except:
+            pass
     except Exception as err:
         print (err)
+    return  current_aim_body, most_recent_body
     
+
+@app.route("/project/<title>", methods=['GET', 'POST'])
+@login_required
+def project(title):
+    proj = Project.query.filter_by(user_id=current_user.id, title=title).first()
     parameters=[proj.study_length, proj.summary_length, proj.s_break_length, 
     proj.l_break_length, proj.pom_num, proj.cycle_num]
     stage, pom_num = proj.current_stage, proj.pom_num
     return render_template("project.html",
-                            project=proj, title=title, parameters=parameters,
-                            recents = [current_aim, most_recent])
+                            project=proj, title=title, parameters=parameters)
 
 @app.route("/edit_project/<title>", methods=['GET', 'POST'])
 @login_required
@@ -273,7 +289,6 @@ def editProject(title):
         proj.cycle_num=form.cycle_num.data
 
         db.session.commit()
-        print( 'Your project has been edited!')
         flash('Your project has been edited!')
         return redirect(url_for('project', title=proj.title))
     else:

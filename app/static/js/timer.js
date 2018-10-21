@@ -1,9 +1,15 @@
+
+function updateRecentActivity(current_aim, last_summary){
+    $("#current_aim").text(current_aim);
+    $("#last_summary").text(last_summary);
+}
 function resetSession() {
     var stage = -1
     $.post('/_reset_session/'+title).done(function(response) {location.reload()});
     }
-
 $(document).ready(() => {
+    
+
     var running_timers = [] // keep track of all running timers
     function displaySeconds(timer) {
         // takes in seconds and returns a string
@@ -52,6 +58,7 @@ $(document).ready(() => {
         // given `stage` we need to update the db with the changes, receive any info we need to update the page with new timer     
         var pb = $('#progress_bar')
         var summary_form = $("#summary")
+        
         $('#stage_num').text(response['stage']);
         $('#summary_header').text(response['header']);
         $('#submit_button').text(response['button']);
@@ -59,6 +66,7 @@ $(document).ready(() => {
         var progress_percentage = Math.round(100*(parseFloat(response['stage']))/(3*parseFloat(pn)));
         pb.css('width', progress_percentage.toString()+"%");
         pb.text(progress_percentage)
+        updateRecentActivity(response["current_aim"], response["last_summary"])
         if (progress_percentage==100) {
             pb.addClass("bg-success")
             pb.removeClass("bg-secondary")
@@ -71,12 +79,15 @@ $(document).ready(() => {
             // BEGIN TIMER (if the user is ready)!
             startTimer(parseInt(response['time']));
         }
-
+        if (! response['show_timer']) {
+            stopTimers()}
         if (response['show_form']) {
-            summary_form.css("visibility","visible")}
+            summary_form.css("visibility","visible")
+            summary_form.val("")
+        }
+            
         else {
             summary_form.css("visibility","hidden")}
-
             summary_form.focus(); // html autofocus doesn't work with hidden
     };
         
