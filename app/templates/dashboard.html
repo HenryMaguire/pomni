@@ -6,47 +6,44 @@
   <div class="col-md-6">
     <h2 class="display-4 pb-4">Projects</h2>
     </div>
-
+    
 
 </div>
-{% endblock %}
-
-{% block topRightButton %}
-
 {% endblock %}
 
 {% block app_content %}
 
   <div class="row">
-    {% if has_projects %}
-    {% for n in range(projects.all() |length) %}
+  {% if has_projects %}
+    {% for n in range((projects.all() | length)+1) %}
+    <!-- <div class="numberCircle">{{ n+1 }}</div> -->
+    {% if n == (projects.all() | length) %}
     <div class="col-md-3">
-    <div class="numberCircle">{{ n+1 }}</div>
-    <h3 class="d-inline"><a href="/project/{{projects[n].title}}" class="text-success">{{ projects[n].title }}</a></h3>
-    <p class="block-with-text text-muted">{{ projects[n].description }}
-    </p>
-    <p align='justify'><a href="/project/{{projects[n].title}}"><img src="https://image.flaticon.com/icons/svg/148/148993.svg" height="100" width="100"></a>
-    </p>
-    <!-- <p>Last updated: {{ projects[n].timestamp.strftime('%H:%M') }} on {{ projects[n].timestamp.strftime('%d/%m/%y') }}
-      </p> -->
-    
-  </div>
-    {% endfor %}
-  </div>
-  <div class="row">
-    <div class="col-md-3">
-      <h3><a href="/new_project/" class='text-info'>+ Create new project</a></h3>
-      </div>
-    <div class="col-md-6">
+    <div class="text-center">
+        <a href="/new_project/" class='btn btn-outline-primary btn-large my-5'>+ new project</a>
     </div>
-    <div class="col-md-3">
     </div>
-
-  </div>
     {% else %}
-    <h4>You don't seem to have started any projects. <a href="/new_project/">Make one?</a></h4>
-    {% endif %}
+    <div class="col-md-3 border rounded">
+    <a  href="/project/{{projects[n].title}}" class="nounderline">
 
+      <span>
+        <img class="rounded d-inline mb-2 seethrough" src="https://image.flaticon.com/icons/svg/148/148993.svg" height="27" width="30">
+      <h3 class="d-inline text-primary">{{ projects[n].title }}</h3>
+      <p class="block-with-text text-primary mt-2">{{ projects[n].description }}</p>
+      </span>
+      <small><p class="text-muted text-right align-bottom" id="last_updated{{n}}">  
+      </p> </small>
+      <script> $("#last_updated{{n}}").text("Last updated " + moment("{{projects[n].last_timestamp.strftime('%d%m%y%H%M%S') }}", "DDMMYYhhmmss").fromNow()); </script> 
+    </a>
+  </div>
+  {% endif %}
+  {% endfor %}
 
+  {% else %}
+    <h4>Let's get to work. <a href="/new_project/">Start a new project!</a></h4>
+  {% endif %}
+
+  </div>
 
 {% endblock %}

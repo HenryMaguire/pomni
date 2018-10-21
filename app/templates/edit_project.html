@@ -3,7 +3,7 @@
 {% block page_title %}
 <div class="row">
   <div class="col-md-8">
-        <div class="display-4 d-inline">{{ project.title }} <i class="fas fa-cog text-secondary"></i></div>
+        <div class="display-4 d-inline">{{ project.title }} </div>
     </div>
   <div class="col-md-2 offset-md-1">
     <a href="{{ url_for('project', title=project.title, stage=project.current_stage)}}"><img src="https://image.flaticon.com/icons/svg/1082/1082408.svg" height="70" width="70"></a>

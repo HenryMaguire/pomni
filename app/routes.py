@@ -95,7 +95,8 @@ def new_pomodoro():
     pom = Pomodoro(body = body, session=proj.num_sessions, is_aim = is_aim,
                            author=current_user, project=proj, timestamp_end = timestamp)
     db.session.add(pom)
-    proj.current_stage +=1
+    proj.current_stage+=1
+    proj.last_timestamp = datetime.utcnow()
     db.session.add(proj)
     db.session.commit()
     

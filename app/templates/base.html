@@ -4,14 +4,16 @@
       <meta charset="UTF-8">
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <meta http-equiv="X-UA-Compatible" content="ie=edge">
+      <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
       <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.4.1/css/all.css" integrity="sha384-5sAR7xN1Nv6T6+dT2mhtzEpVJvfS3NScPQTrOxhwjIuvcA67KV2R5Jz6kr4abQsz" crossorigin="anonymous">
       <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
-      <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static', filename="css/bootstrap.min.css")}}">
-      <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static', filename="css/style.min.css")}}">
+      <script src="{{ url_for('static', filename='js/moment.min.js')}}"></script>
+      <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static', filename='css/bootstrap.min.css')}}">
+      <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static', filename='css/style.min.css')}}">
       <audio id="over_music" preload="auto">
           <source src="{{ url_for('static', filename='ding-ding.mp3') }}">
       </audio>
-      <link rel="icon" type="image/svg" href= "https://image.flaticon.com/icons/svg/167/167283.svg">
+      
       {% if title %}
           <title>{{ title }} - Pomni</title>
         {% else %}
@@ -25,16 +27,16 @@
 
 <body>
 {% block navbar %}
-<div class="fixed-top bg-light">
+<div class="fixed-top topbar">
   <div class="container-fluid">
   <div class="row">
-      <div class="col-2 d-inline-block">
-      <a href="/dashboard"><img src="https://image.flaticon.com/icons/svg/167/167283.svg" height="70" width="70"></a><h1 class="d-inline align-bottom">Pomni</h1></div>
-      <div class="col-2"> <a href="/dashboard" role="button"><i class="py-3 fas fa-home fa-3x text-secondary"></i></a></div>
+      <div class="col-7 d-inline-block">
+      <a href="/"><img src="https://image.flaticon.com/icons/svg/167/167283.svg" height="70" width="70"></a><h1 class="d-inline align-bottom">Pomni</h1></div>
+      <div class="col-2"> <a href="/" role="button"><i class="py-3 fas fa-home fa-3x text-primary"></i></a></div>
      
     <div class="col-3 ml-auto">
         <a href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            <i class="py-3 fas fa-bars fa-3x text-secondary"></i>
+            <i class="py-3 fas fa-bars fa-3x text-primary"></i>
         </a>
         <div class="dropdown-menu" aria-labelledby="navbarDropdown">
           <a class="dropdown-item" href="/logout">Logout <i class="fas fa-sign-out-alt"></i></a>
@@ -47,7 +49,7 @@
 {% endblock %}
 
 {% block content %}
-    <div class="container py-1">
+    <div class="container py-3">
 
 
       {% block page_title %}{% endblock %}

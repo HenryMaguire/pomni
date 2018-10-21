@@ -9,42 +9,23 @@
 </script>
 <div class="row">
 <span id="stage_num" class="d-none">{{ project.current_stage }}</span>
-<div class="col-8">
-
-</div> <div class="display-4"> {{ project.title }} </div>
-<div class="col-3 offset-1">
+<div class="col-md-8">
+    <p class="display-4"> {{ project.title }} </p>
+</div> 
+<div class="col-md-4">
     <div class="btn-group d-inline">
-        <button class="btn btn-outline-secondary d-inline my-3" data-toggle="collapse" data-target="#collapse-btn-1">
+        <button class="btn btn-outline-primary d-inline my-3" data-toggle="collapse" data-target="#collapse-btn-1">
             Description
           </button>
         <span data-toggle="tooltip" data-placement="right" title="Change project settings">
-            <a class="btn btn-outline-secondary" href="{{ url_for('editProject', title=project.title)}}"><i class="fas fa-cogs"></i> </a>
+            <a class="btn btn-outline-primary" href="{{ url_for('editProject', title=project.title)}}"><i class="fas fa-cogs"></i> </a>
         </span>
           <span data-toggle="tooltip" data-placement="right" title="Need some guidance?">
-            <button class="btn btn-outline-secondary" data-toggle="modal" data-target="#aiModal"><i class="fas fa-user-friends"></i>
+            <button class="btn btn-outline-primary" data-toggle="modal" data-target="#aiModal"><i class="fas fa-user-friends"></i>
               </button>
             </span>
     </div> <p class="text-muted text-right d-inline">
 </div>
-</div>
-<div class="row">
-    <div class="col-3 offset-8 align-center">
-      <div class="row">
-          <div class="collapse" id="collapse-btn-1">
-              <div class="card">
-                <div class="card-body">
-                    <p class="lead"> "{{ project.description }}"</p>
-                </div>
-              </div>
-            </div>
-      </div>
-    
-      <div class="row">
-          
-            <!-- - Started: {{ project.timestamp.strftime('%H:%M:%S') }} on {{ project.timestamp.strftime('%d/%m/%y') }}. --> 
-          </p>
-      </div>  
-    </div> 
 </div>
 
 
@@ -58,19 +39,33 @@
       <div class="display-4 border border-primary py-4 text-center rounded-circle" id="timer">00 : 00</div>
       <textarea class="form-control" id="summary" rows="3" name="summary" max_length="{{max_summary_length}}" onKeyup="countRemainingCharacters()" autofocus></textarea>
     </div>
-    <div class="row my-0"> <p class="text-right text-muted" id="char_count"></p></div>
-    <button class="btn btn-secondary btn-block" id="submit_button" type="button">Submit</button>
+    <div class="row my-0 text-right"> <p class="text-right text-muted" id="char_count"></p></div>
+    <button class="btn btn-primary btn-block" id="submit_button" type="button">Submit</button>
     <div class="progress my-2" >
-        <div id="progress_bar" class="progress-bar bg-secondary" style="width:{{(100*(project.current_stage)/(3*project.pom_num)) | int}}%;">{{(100*(project.current_stage)/(3*project.pom_num)) | int}}%</div>
+        <div id="progress_bar" class="progress-bar bg-primary" style="width:{{(100*(project.current_stage)/(3*project.pom_num)) | int}}%;">{{(100*(project.current_stage)/(3*project.pom_num)) | int}}%</div>
     </div>
     <div class="text-center py-1">
-        <button class="btn btn-outline-secondary py-0" data-toggle="modal" data-target="#resetModal">
+        <button class="btn btn-outline-primary py-0" data-toggle="modal" data-target="#resetModal">
       Reset </button>
     </div>
   </div>
 
 <!-- PREVIOUS ACTIVITY  -->
-  <div class="col-md-6 offset-md-2 border-top my-4">
+<div class="col-md-6 offset-md-2 my-4">
+    <!-- COLLAPSABLE PROJECT DESCRIPTION -->
+<div class="row">
+    <div class="align-center">
+      <div class="row">
+          <div class="collapse" id="collapse-btn-1">
+              <div class="card">
+                <div class="card-body">
+                    <p class="lead"> "{{ project.description }}"</p>
+                </div>
+              </div>
+            </div>
+      </div>
+    </div> 
+</div>
     <div class="row my-3">
       <div class="col-md-6">
         <p class="lead">Current aim:</p>
@@ -82,7 +77,7 @@
       </div>
     </div>
     <div class="row">
-          <a class="btn btn-outline-secondary btn-block py-0" href="{{ url_for('notebank', title=project.title)}}">
+          <a class="btn btn-outline-primary btn-block py-0" href="{{ url_for('notebank', title=project.title)}}">
       <div class="d-inline-block">
       <img class="d-inline" src="https://image.flaticon.com/icons/svg/167/167755.svg" height="40" width="40">
             <p class="d-inline align-middle">Notebank</p></div>
@@ -104,7 +99,7 @@
           This feature is coming soon!
         </div>
         <div class="modal-footer">
-          <button class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <button class="btn btn-primary" data-dismiss="modal">Close</button>
         </div>
       </div>
     </div>
@@ -128,7 +123,7 @@
           </div>
         </div>
         <div class="modal-footer">
-          <button class="btn btn-secondary mr-auto" data-dismiss="modal">Close</button>
+          <button class="btn btn-primary mr-auto" data-dismiss="modal">Close</button>
           <button onclick="resetSession()" class="btn btn-danger" data-dismiss="modal">Reset</button>
           
         </div>

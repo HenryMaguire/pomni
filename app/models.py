@@ -56,7 +56,8 @@ class Project(db.Model):
     pom_num = db.Column(db.Integer, default=3)
     cycle_num = db.Column(db.Integer, default=2)
 
-    timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
+    timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow())
+    last_timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow())
     # foreign key: references the id in user model
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
 

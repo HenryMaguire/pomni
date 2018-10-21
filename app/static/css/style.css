@@ -1,13 +1,16 @@
 body {
   margin-top: 105px; }
 
-.navbar {
-  box-shadow: 2px 2px 5px 'primary';
-  opacity: 0.9;
-  background: #fff; }
-  .navbar .nav-item {
-    font-size: 1.4rem;
-    padding-right: 1.4rem; }
+.nounderline {
+  text-decoration: none !important; }
+
+.topbar {
+  box-shadow: 2px 2px 4px #2D3855;
+  opacity: 0.95;
+  background: #E2F7C8; }
+
+.seethrough {
+  opacity: 0.8; }
 
 .timer {
   background: #3292a6;
