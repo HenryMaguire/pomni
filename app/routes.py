@@ -64,11 +64,20 @@ def get_response_json(stage, pom_num, title):
                         "button" : "Skip", "show_form" : False, 
                         "time": time_dict['lbt']})
     else:
-        print ("WE'RE HERE")
+        raise Exception("Gone outside of the allowed stage values in the timer app")
         pass # this should never be the case.
     return jsonify(response_dict)
 
 from dateutil.tz import gettz
+
+@app.route("/_next_stage/<title>", methods=['GET','POST'])
+def increment_stage(title):
+    proj = Project.query.filter_by(user_id=current_user.id, title=title).first()
+    proj.current_stage+=1
+    db.session.add(proj)
+    db.session.commit()
+    return get_response_json(proj.current_stage, proj.pom_num, proj.title)
+
 @app.route("/_new_pomodoro", methods=['POST'])
 def new_pomodoro():
     rf = request.form
@@ -271,7 +280,7 @@ def project(title):
     proj.l_break_length, proj.pom_num, proj.cycle_num]
     stage, pom_num = proj.current_stage, proj.pom_num
     return render_template("project.html", project=proj, title=title, 
-                            parameters=parameters, max_length=max_summary_length)
+                            parameters=parameters, max_summary_length=max_summary_length)
 
 @app.route("/edit_project/<title>", methods=['GET', 'POST'])
 @login_required

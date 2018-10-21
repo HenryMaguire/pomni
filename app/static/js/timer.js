@@ -33,10 +33,8 @@ function countRemainingCharacters() {
 }
 $(document).ready(() => {
     
-
-    
-
     var running_timers = [] // keep track of all running timers
+
     function displaySeconds(timer) {
         // takes in seconds and returns a string
         minutes = parseInt(timer / 60, 10)
@@ -46,13 +44,11 @@ $(document).ready(() => {
         // same for seconds (normal time format)
         seconds = seconds < 10 ? "0" + seconds : seconds;
         return minutes + " : " + seconds;
-        }
-
-    var refr = 0; // define the refresh out of startTimer scope to user can stop it
+    }
 
     function showAlert() {
         alert("Time's Up!");
-       }
+    }
 
     function startTimer(duration) {
       duration = duration*60
@@ -109,7 +105,6 @@ $(document).ready(() => {
             stopTimers()}
 
         if (response['show_form']) {
-            console.log("YESSSSSS")
             $("#char_count").removeClass("text-danger")
             $("#char_count").css("visibility","visible")
             summary_form.css("visibility","visible")
@@ -119,7 +114,7 @@ $(document).ready(() => {
         }
             
         else {
-            var max_length = parseInt(summary_form.attr('maxlength'));
+            var max_length = parseInt(summary_form.attr('max_length'));
             $("#char_count").css("visibility","hidden")
             $("#char_count").text(max_length + " characters remaining");
             
@@ -130,7 +125,7 @@ $(document).ready(() => {
     };
         
 
-    function updateDB(params, title) {
+    function updateDB(json_data, params, title) {
         // on click of submit button, take form and send it to the db
         // we definitely need the end timestamp and the stage 
         // `stage` must be incremented serverside, so that if the user exits, we know which stage they are actually on. Also stops people having post access to db via JS script
@@ -147,31 +142,47 @@ $(document).ready(() => {
                 }
             }
         });
+        // start listening to users clicking submit button
         submit_button.bind('click', function(e) {
             e.preventDefault();
-            var summary_text = summary_form.val();
-            // Naughty hack below: get stage secretly via HTML page
-            // allows info to be passed from python to JS without db call. Unsafe
-            var current_stage = parseInt($('#stage_num').text());
-            var pom_num = params[4];
-            var timestamp = Date.now(); 
-            $.post('/_new_pomodoro', {
-                summary: summary_text,
-                timestamp: timestamp, 
-                stage: current_stage, 
-                wt: params[0], st: params[1], sbt: params[2], 
-                lbt: params[3], pn: pom_num, bn: params[5], title: title
-                }).done(function(response) {changeTimer(response, pom_num)}
-                ).fail(function() {
-                    $('#summary_header').text("Error: Could not contact server.");
-                    });
-            });
-        };
+            console.log(json_data['show_form'])
+            if (json_data['show_form']){
+                var summary_text = summary_form.val();
+                // Naughty hack below: get stage secretly via HTML page
+                // allows info to be passed from python to JS without db call. Unsafe
+                var current_stage = parseInt($('#stage_num').text());
+                var pom_num = params[4];
+                var timestamp = Date.now();
+                // only make a new pomodoro if form is shown
+                $.post('/_new_pomodoro', {
+                    summary: summary_text,
+                    timestamp: timestamp, 
+                    stage: current_stage, 
+                    wt: params[0], st: params[1], sbt: params[2], 
+                    lbt: params[3], pn: pom_num, bn: params[5], title: title
+                    }).done(function(response) {
+                        json_data = response
+                        changeTimer(response, pom_num)}
+                    ).fail(function() {
+                        $('#summary_header').text("Error: Could not contact server.");
+                        });
+                }
+            else {
+                $.getJSON("/_next_stage/"+title.toString(), function(response) {
+                    var pom_num = params[4];
+                    json_data = response
+                    changeTimer(response, pom_num)
+                });
+
+            };
+        });
+    };
     // upon page load, find out which stage of session user is at from db
     $.getJSON("/_get_response_json/"+title.toString()+"/"+stage.toString()+"/"+params[4].toString(), function(data) {
         changeTimer(data, params[4]) // crazy hack to make the initial app state correct
+        updateDB(data, params, title);
     });
-    updateDB(params, title);
+    
     // if user clicks the submit button at any time, stop the timer
     $('#submit_button').bind('click', function(e) {stopTimers()})
     if (stage==-1) {
@@ -179,4 +190,4 @@ $(document).ready(() => {
     }
     
     
-})
+});

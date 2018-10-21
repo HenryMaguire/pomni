@@ -28,19 +28,19 @@
 {% for i in range(project.num_sessions) %}
   <h3>Session: {{i+1}} </h3>
 
-  {% for pom in pomodoros.filter_by(session=i+1) %}
+  {% for j in range(pomodoros.filter_by(session=i+1).all() | length ) %}
   <div class="row">
-  {% if pom.body|length>0 %}
-    {% if pom.is_aim %}
+  {% if pomodoros.filter_by(session=i+1)[j].body|length>0 %}
+    {% if pomodoros.filter_by(session=i+1)[j].is_aim %}
     <div class="col-md-2"> <h3 class="d-inline">Aim :<h3></div>
-      <div class="col-md-8"><p class="lead">{{ pom.body }} </p></div>
-      <div class="col-md-2"> <p class="text-muted">  Started on {{ pom.timestamp_end.strftime('%d/%m/%y') }} at {{ pom.timestamp_end.strftime('%H:%M:%S') }}.
+      <div class="col-md-8"><p class="lead">{{ pomodoros.filter_by(session=i+1)[j].body }} </p></div>
+      <div class="col-md-2"> <p class="text-muted">  Started on {{ pomodoros.filter_by(session=i+1)[j].timestamp_end.strftime('%d/%m/%y') }} at {{ pomodoros.filter_by(session=i+1)[j].timestamp_end.strftime('%H:%M:%S') }}.
       </p></div>
     {% else %}
     <div class="col-md-8">
-      <p class="d-inline"><strong>Summary {{i}} </strong>: {{ pom.body }}</p></div>
+      <p class="d-inline"><strong>Summary {{j}} </strong>: {{ pomodoros.filter_by(session=i+1)[j].body }}</p></div>
 
-      <div class="col-md-2 offset-md-2"> <p class="text-muted">  Logged on {{ pom.timestamp_end.strftime('%d/%m/%y') }} at {{ pom.timestamp_end.strftime('%H:%M:%S') }}. </p></div>
+      <div class="col-md-2 offset-md-2"> <p class="text-muted">  Logged on {{ pomodoros.filter_by(session=i+1)[j].timestamp_end.strftime('%d/%m/%y') }} at {{ pomodoros.filter_by(session=i+1)[j].timestamp_end.strftime('%H:%M:%S') }}. </p></div>
         {% endif %}
       {% else %}
       {% endif %}
