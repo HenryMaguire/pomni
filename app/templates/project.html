@@ -42,7 +42,7 @@
     <div class="row my-0 text-right"> <p class="text-right text-muted" id="char_count"></p></div>
     <button class="btn btn-primary btn-block" id="submit_button" type="button">Submit</button>
     <div class="progress my-2" >
-        <div id="progress_bar" class="progress-bar bg-primary" style="width:{{(100*(project.current_stage)/(3*project.pom_num)) | int}}%;">{{(100*(project.current_stage)/(3*project.pom_num)) | int}}%</div>
+        <div id="progress_bar" class="progress-bar bg-warning" style="width:{{(100*(project.current_stage)/(3*project.pom_num)) | int}}%;">{{(100*(project.current_stage)/(3*project.pom_num)) | int}}%</div>
     </div>
     <div class="text-center py-1">
         <button class="btn btn-outline-primary py-0" data-toggle="modal" data-target="#resetModal">
@@ -57,9 +57,9 @@
     <div class="align-center">
       <div class="row">
           <div class="collapse" id="collapse-btn-1">
-              <div class="card">
+              <div class="">
                 <div class="card-body">
-                    <p class="lead"> "{{ project.description }}"</p>
+                    <p class="lead text-muted"> "{{ project.description }}"</p>
                 </div>
               </div>
             </div>

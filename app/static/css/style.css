@@ -16,6 +16,12 @@ body {
   background: #3292a6;
   font-size: 1.4rem; }
 
+.project-box {
+  border-radius: 10px;
+  padding: 13px;
+  margin-left: -10px;
+  margin-right: -10px; }
+
 /* styles for '...' */
 .block-with-text {
   /* hide text if it more than N lines  */

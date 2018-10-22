@@ -87,14 +87,14 @@ $(document).ready(() => {
         $('#timer').text(displaySeconds(60*parseInt(response['time'])));
         var progress_percentage = Math.round(100*(parseFloat(response['stage']))/(3*parseFloat(pn)));
         pb.css('width', progress_percentage.toString()+"%");
-        pb.text(progress_percentage)
+        pb.html(progress_percentage+"&percnt;")
         updateRecentActivity(response["current_aim"], response["last_summary"])
         if (progress_percentage==100) {
             pb.addClass("bg-success")
-            pb.removeClass("bg-secondary")
+            pb.removeClass("bg-warning")
         }
         else {
-            pb.addClass("bg-secondary")
+            pb.addClass("bg-warning")
             pb.removeClass("bg-success")
         }
         if (parseInt(response['stage'])>=0){
