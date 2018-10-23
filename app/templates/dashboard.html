@@ -4,7 +4,7 @@
 {% block page_title %}
 <div class="row">
   <div class="col-md-6">
-    <h2 class="display-4 pb-4">Projects</h2>
+    <h2 class="display-4 pb-2">Projects</h2>
     </div>
     
 
@@ -13,35 +13,37 @@
 
 {% block app_content %}
 
-  <div class="row ">
+  <div class="row">
   {% if has_projects %}
     {% for n in range((projects.all() | length)+1) %}
     <!-- <div class="numberCircle">{{ n+1 }}</div> -->
     {% if n == (projects.all() | length) %}
-    <div class="col-lg-2 col-md-6">
+    <div class="col-lg-4 col-md-6">
     <div class="text-center">
-        <a href="/new_project/" class='btn btn-outline-primary btn-large my-5'>+ new project</a>
+        <a href="/new_project/" class='btn btn-outline-primary btn-large ml-5 m-5'>+ new project</a>
     </div>
     </div>
     {% else %}
     <div class="col-lg-4 col-md-6 my-1">
       <div class="border rounded project-box">
-        <a  href="/project/{{projects[n].title}}" class="nounderline">
-          <div class="d-flex flex-column justify-content-around m-2" style="height: 170px;">
+          
+          <div class="d-flex flex-column justify-content-around m-2">
             <div class="">
+                <a  href="/project/{{projects[n].title}}">
                   <h4 class="d-inline text-primary">{{ projects[n].title }}</h3>
                   <!-- <img class="d-inline ml-5 mb-2 seethrough" src="https://image.flaticon.com/icons/svg/148/148993.svg" height="27" width="30">-->
+                </a>
             </div>
-            <div class="">
-              <p class="block-with-text text-muted mt-2">{{ projects[n].description }}</p>
+            <div class="pt-1">
+              <p class="block-with-text text-muted">{{ projects[n].description }}</p>
             </div>
-            <div class="">
-              <small><p class="text-muted text-right align-bottom" id="last_updated{{n}}">  
+            <div class="align-bottom">
+              <small><p class="text-muted text-right align-bottom mt-auto" id="last_updated{{n}}">  
               </p> </small>
               <script> $("#last_updated{{n}}").text("Updated " + moment("{{projects[n].last_timestamp.strftime('%d%m%y%H%M%S') }}", "DDMMYYhhmmss").fromNow()); </script> 
             </div>
           </div>
-          </a>
+          
         </div>
       </div>
   {% endif %}

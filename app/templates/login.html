@@ -6,6 +6,7 @@
 
 {% block app_content %}
 
+
 <div class="col-md-4">
   <form action="" method="post" novalidate>
       {{ form.hidden_tag() }}
@@ -34,3 +35,7 @@
 </div>
 <div class="col-md-4 offset-md-3"></div>
 {% endblock %}
+
+<script>
+        $("#nav_dropdown").css("visibility","invisible")
+</script>

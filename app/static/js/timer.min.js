@@ -26,10 +26,6 @@ function countRemainingCharacters() {
         $("#char_count").addClass("text-muted")
         $('#submit_button').prop('disabled', false)
     }
-        
-    // if summary_length > max_length add danger class to thing
-    // also turn off the submit button
-    // change name of attribute to maxLength
 }
 $(document).ready(() => {
     
@@ -86,10 +82,13 @@ $(document).ready(() => {
         $('#submit_button').text(response['button']);
         $('#timer').text(displaySeconds(60*parseInt(response['time'])));
         var progress_percentage = Math.round(100*(parseFloat(response['stage']))/(3*parseFloat(pn)));
+        if (progress_percentage>100 | progress_percentage<0)  {
+            progress_percentage = 0;
+        }
         pb.css('width', progress_percentage.toString()+"%");
         pb.html(progress_percentage+"&percnt;")
         updateRecentActivity(response["current_aim"], response["last_summary"])
-        if (progress_percentage==100) {
+        if (progress_percentage>=100) {
             pb.addClass("bg-success")
             pb.removeClass("bg-warning")
         }

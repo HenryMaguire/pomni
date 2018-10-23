@@ -68,7 +68,6 @@ def get_response_json(stage, pom_num, title):
         pass # this should never be the case.
     return jsonify(response_dict)
 
-from dateutil.tz import gettz
 
 @app.route("/_next_stage/<title>", methods=['GET','POST'])
 def increment_stage(title):
@@ -117,8 +116,7 @@ def login():
         # take username and query database with it
         user = User.query.filter_by(username=form.username.data).first()
         if user is None or not user.check_password(form.password.data):
-            print('Invalid username or password')
-            flash('Invalid username or password')
+            flash('Invalid username or password', 'bg-danger')
             return redirect(url_for('login'))
         else:
             login_user(user, remember=form.remember_me.data)
@@ -137,7 +135,7 @@ def register():
         user.set_password(form.password.data)
         db.session.add(user)
         db.session.commit()
-        flash('Congratulations, you are now registered!')
+        flash('Congratulations, you are now registered!', "bg-success")
         return redirect(url_for('login'))
     return render_template('register.html', title='Register', form=form)
 
@@ -150,7 +148,7 @@ def reset_password_request():
         user = User.query.filter_by(email=form.email.data).first()
         if user:
             send_password_reset_email(user)
-        flash('Check your email for the instructions to reset your password')
+        flash('Check your email for the instructions to reset your password', 'bg-success')
         return redirect(url_for('login'))
     return render_template('reset_password_request.html',
                            title='Reset Password', form=form)
@@ -167,30 +165,32 @@ def reset_password(token):
     if form.validate_on_submit():
         user.set_password(form.password.data)
         db.session.commit()
-        flash('Your password has been changed.')
+        flash('Your password has been changed.', 'bg-success')
         return redirect(url_for('login'))
     return render_template('reset_password.html',
                            title='Reset Password', form=form)
 
 @app.route("/delete_user", methods=['GET', 'POST'])
+@login_required
 def deleteUser():
     form = DeleteUserForm()
     if form.validate_on_submit():
         db.session.delete(current_user)
         db.session.commit()
-        print ("{}, we're sorry to see you go!".format(current_user.username))
-        flash("{}, we're sorry to see you go!".format(current_user.username))
+        flash("{}, we're sorry to see you go!".format(current_user.username), 'bg-info')
         return redirect(url_for('login'))
     return render_template('delete_user.html', title='Delete account', form=form)
 
 @app.route('/user_settings')
+@login_required
 def userSettings():
     return render_template('user_settings.html', user=current_user)
 
 @app.route('/logout')
+@login_required
 def logout():
     logout_user()
-    flash("See you again soon!")
+    flash("See you again soon!", 'bg-info')
     return redirect(url_for('login'))
 
 @app.route("/dashboard/", methods=['GET', 'POST'])
@@ -227,8 +227,7 @@ def newProject():
                        author=current_user)
         db.session.add(project)
         db.session.commit()
-        print( 'Your project was created!')
-        flash('Your project was created!')
+        flash('Your project was created!', 'bg-success')
         return redirect(url_for('dashboard'))
     else:
         return render_template('new_project.html', form=form, title='Project creation')
@@ -240,8 +239,7 @@ def deleteProject(title):
     if form.validate_on_submit():
         db.session.delete(p)
         db.session.commit()
-        print ("{}, has been deleted.".format(p.id))
-        flash("{}, has been deleted.".format(p.id))
+        flash("{}, has been deleted.".format(p.id), 'bg-warning')
         return redirect(url_for('dashboard'))
     return render_template('delete_project.html', title='Delete project',
                             form=form, project=p)
@@ -288,8 +286,14 @@ def project(title):
 def editProject(title):
     proj = Project.query.filter_by(user_id=current_user.id, title=title).first()
     form = EditProjectForm(proj.title)
+    print(form.validate_on_submit())
+    #print()
+    for key, err in form.errors.items():
+        message = err[0].replace("Field", key)
+        flash(message.capitalize(), 'bg-danger')
     if form.validate_on_submit():
         # take username and query database with it
+        print("We're here")
         proj.title=form.title.data
         proj.description=form.description.data
         proj.study_length=form.study_length.data
@@ -297,12 +301,12 @@ def editProject(title):
         proj.s_break_length=form.s_break_length.data
         proj.l_break_length=form.l_break_length.data
         proj.pom_num=form.pom_num.data
-        proj.cycle_num=form.cycle_num.data
-
+        #proj.cycle_num=form.cycle_num.data
         db.session.commit()
-        flash('Your project has been edited!')
+        flash('Your project has been edited!', 'bg-success')
         return redirect(url_for('project', title=proj.title))
     else:
+        
         return render_template('edit_project.html', form=form, project=proj,
                                                         title='Edit project')
 

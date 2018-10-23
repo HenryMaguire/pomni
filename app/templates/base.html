@@ -34,9 +34,9 @@
       <a href="/"><img src="https://image.flaticon.com/icons/svg/167/167283.svg" height="70" width="70"></a><h1 class="d-inline align-bottom">Pomni</h1></div>
       <div class="col-2"> <a href="/" role="button"><i class="py-3 fas fa-home fa-3x text-primary"></i></a></div>
      
-    <div class="col-3 ml-auto">
+    <div class="col-3 ml-auto" id="nav_dropdown">
         <a href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            <i class="py-3 fas fa-bars fa-3x text-primary"></i>
+            <i class="py-3 fas fa-bars fa-3x text-primary" ></i>
         </a>
         <div class="dropdown-menu" aria-labelledby="navbarDropdown">
           <a class="dropdown-item" href="/logout">Logout <i class="fas fa-sign-out-alt"></i></a>
@@ -54,10 +54,10 @@
 
       {% block page_title %}{% endblock %}
       <div>
-        {% with messages = get_flashed_messages() %}
+        {% with messages = get_flashed_messages(with_categories=true) %}
         {% if messages %}
-            {% for message in messages %}
-            <div class="alert alert-info bg-success" role="alert">{{ message }}</div>
+            {% for category, message in messages %}
+            <div class="alert {{category}}" role="alert">{{ message }}</div>
             {% endfor %}
         {% endif %}
         {% endwith %}

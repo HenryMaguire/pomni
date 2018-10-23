@@ -24,9 +24,12 @@ body {
 
 .project-box {
   border-radius:10px;
-  padding: 13px;
+  padding-right: 13px;
+  padding-left: 13px;
   margin-left: -10px;
   margin-right: -10px;
+  height: 150px;
+  background: rgba(255, 235, 232, 0.3);
 }
 
 /* styles for '...' */ 

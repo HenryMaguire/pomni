@@ -14,18 +14,39 @@
 
 {% block app_content %}
 
+<script>
+
+function countRemainingCharacters() {
+    summary_form = $("#description")
+    var summary_length = summary_form.val().length;
+    var max_length = parseInt(summary_form.attr('max_length'));
+    var diff = max_length-summary_length
+    $("#char_count").text(diff + " characters remaining");
+    if (diff <0) {
+        console.log(diff)
+        $("#char_count").addClass("text-danger")
+        $("#char_count").removeClass("text-muted")
+    }
+    else {
+        $("#char_count").removeClass("text-danger")
+        $("#char_count").addClass("text-muted")
+        }
+}
+
+</script>
+
 <form action="" method="post">
         {{ form.hidden_tag() }}
         <p>
             {{ form.title(size=32, placeholder=project.title, default=project.title, value=project.title, class_="form-control")}}<br>
             {% for error in form.title.errors %}
-            <span style="color: red;">[{{ error }}]</span>
+            <span class="text-danger">[{{ error }}]</span>
             {% endfor %}
         </p>
-        <p>
-    
-            {{ form.description(size=64, placeholder=project.description, class_="form-control") }}<br>
+        <p class='my-0'>
+            {{ form.description(size=64, placeholder=project.description, class_="form-control", id="description", onkeyup="countRemainingCharacters()", max_length="240") }}
         </p>
+        <div class="col-4 no-gutters ml-auto"> <small><p class="text-right text-muted" id="char_count"></p></small></div>
         <script> var textarea = document.getElementById('project_description'); textarea.innerHTML = "{{ project.description}}" </script>
         <div class="row">
             <div class="col-md-3">How long can you concentrate for? </div> <div class="col-md-3">{{ form.study_length}} minutes</div><div class="col-md-4 text-muted">Research has shown 25 minutes to be an optimal time to work for!</div><div class="col-md-2"></div>
@@ -53,14 +74,6 @@
              <p class="lead">... which will be {{ form.l_break_length(class_="p") }} minutes long! </p>
             </div>
         </div>
-        <!-- <div class="row">
-          <div class="col-md-5 offset-md-7">
-            <p class="lead text-center">
-                I would like {{ form.cycle_num}} long breaks before I'm done for the day!"
-            </p>
-            </div>
-        </div> -->
-    
         <p>{{ form.submit(class_="btn btn-outline-primary btn-block") }}</p>
     </form>
 
@@ -71,3 +84,11 @@
     </div>
   </div>
 {% endblock %}
+
+<!-- <div class="row">
+          <div class="col-md-5 offset-md-7">
+            <p class="lead text-center">
+                I would like {{ form.cycle_num}} long breaks before I'm done for the day!"
+            </p>
+            </div>
+        </div> -->

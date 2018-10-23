@@ -7,6 +7,11 @@ from datetime import datetime
 @app.shell_context_processor
 def make_shell_context():
     # adds the database and models to `flask shell` environment
+    
+    return {'db': db, 'User': User, 'Project': Project, 'Pomodoro': Pomodoro}
+
+def update_db():
+    # makes default timestamps. Bugfix
     projects = Project.query.filter_by().all()
     for p in projects:
         poms = Pomodoro.query.filter_by(project=p)
@@ -21,5 +26,5 @@ def make_shell_context():
             db.session.add(p)
             db.session.commit()
             pass
-    return {'db': db, 'User': User, 'Project': Project, 'Pomodoro': Pomodoro}
 
+update_db()
