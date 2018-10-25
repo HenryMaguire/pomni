@@ -28,7 +28,7 @@ The pomni web app written in Python, Flask and a little javascript.
 - View the app by typing localhost:5000 in your browser of choice.
 
 # Docker deployment
-`docker run --name pomni -d -p 8000:5000 --link mysql:dbserver -e DATABASE_URL=mysql+pymysql://pomni:pomni123@dbserver/pomni pomni:latest`
+
 - Create the mysql docker container for the database
 
 `docker run --name mysql -d -e MYSQL_RANDOM_ROOT_PASSWORD=yes -e MYSQL_DATABASE=pomni -e MYSQL_USER=pomni -e MYSQL_PASSWORD=<choose-password> mysql/mysql-server:5.7`
