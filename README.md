@@ -1,5 +1,5 @@
 # Pomni app
-The pomni web app written in Python, Flask and a little javascript.
+The pomni web app written using the Flask framework for Python and javascript/JQuery for the dynamic parts of the timer/notetaking app.
 
 # Quick setup
 - In terminal:
